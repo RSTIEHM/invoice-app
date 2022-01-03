@@ -750,12 +750,12 @@ window.addEventListener('resize', () => {
     let elmBTN = _qs('#mark-paid-mobile')
     updateInvoiceBtnStatus(elmBTN)
     mobileControls.classList.add('show')
-    // mobileControls.style.display = 'block'
+    mobileControls.style.display = 'block'
   } else if(window.innerWidth >= 607 && pageID !== 'index' ) {
     let elmBTN = _qs('#mark-paid')
     updateInvoiceBtnStatus(elmBTN)
     mobileControls.classList.remove('show')
-    // mobileControls.style.display = 'none'
+    mobileControls.style.display = 'none'
   }
 })
 
