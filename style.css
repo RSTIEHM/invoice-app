@@ -101,7 +101,7 @@ body.light {
   --clr-purple-med-dark: #f3f3f3;
   --clr-main: #1f1e1e;
   --clr-main-2: #1d1d1d;
-  --invoice-card-bg: #f6f7fa;
+  --invoice-card-bg: #ffffff;
   --draft-bg: rgba(233, 233, 230, 0.836);
   --draft-text: rgb(253, 253, 253);
   --invoice-card-bg2: #edeef5;
@@ -390,11 +390,21 @@ font: inherit
 }
 
 .input-label-msg {
+  opacity: 0;
+  transition: opacity var(--transition);
+  color:red;
+  margin-bottom: 0;
+  padding: 0;
+  line-height: .8;
   display: none;
+  /* display: none; */
 }
 
 .input-label-msg.error {
-  display: block;
+  opacity: 1;
+  /* display: block; */
+  color:red;
+
 }
 
 .input-text {
@@ -536,6 +546,8 @@ select .input-text {
   grid-column: 11 / 11;
   display: grid;
   place-items: center;
+}
+.header-sun-icon-container img {
   cursor: pointer;
 }
 
@@ -577,15 +589,18 @@ select .input-text {
   grid-template-columns: 30% 40px 20% 1fr 40px;
   gap: 20px;
   margin-bottom: 0;
+  margin-bottom: 30px;
   /* display: none; */
 }
 .form-col-5-mod {
+  position: relative;
   display: grid;
-  /* grid-template-columns: 30% 40px 20% 1fr 40px; */
   grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-  margin-bottom: 0;
+  margin-bottom: 30px;
+  gap:  0 20px;
 }
+
+
 
 @media(min-width: 500px) {
   .form-col-5-mod {
@@ -622,6 +637,32 @@ select .input-text {
   transform: translateY(-400px) scale(0);
   transition: all var(--transition);
 }
+
+#edit-form-container {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  z-index: -100;
+  visibility: hidden;
+  opacity: 1;
+  transition: all var(--transition);
+  transform: translateY(-400px) scale(0);
+}
+
+#edit-form-container.show {
+  z-index: 200;
+  visibility: visible;
+  opacity: 1;
+  transform: translateY(75px)  scale(1);
+}
+#edit-form-container.hide {
+  z-index: 200;
+  visibility: visible;
+  opacity: 1;
+  transform: translateY(75px)  scale(1);
+}
+
+
 .form-wrapper {
 }
 
@@ -645,6 +686,15 @@ select .input-text {
 .form-group-title {
   margin-bottom: 2rem;
   color: var(--clr-main);
+}
+.form-group-title-name {
+
+}
+
+.form-group-title-span {
+  opacity: 0;
+  color: red;
+  font-size: 12px;
 }
 
 #line-item-qty {
@@ -684,6 +734,7 @@ select .input-text {
   width: 17px;
   height: 20px;
   transform: translateY(20px);
+  color:red
 }
 
 @media(min-width: 500px) {
@@ -715,6 +766,15 @@ select .input-text {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 0px;
+}
+
+.new-form-button-container-2 {
+  padding: 1.5rem 2rem;
+  margin-top: 50px;
+  display: flex;
+  justify-content: end;
+  align-items: end;
   gap: 0px;
 }
 
