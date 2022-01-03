@@ -612,6 +612,33 @@ const clearFormInputs = () => {
   // REMOVE EXTRA LINE ITEMS ==========
 }
 
+const getEditFormHTML = () => {
+  let street = _qs('#edit-street')
+  let city = _qs('#edit-city')
+  let zipcode = _qs('#edit-zipcode')
+  let country = _qs('#edit-country')
+  let clientName = _qs('#edit-client-name')
+  let clientEmail = _qs('#edit-client-email')
+  let clientAddress = _qs('#edit-client-address')
+  let clientCity = _qs('#edit-client-city')
+  let clientZip = _qs('#edit-client-zipcode')
+  let clientCountry = _qs('#edit-client-country')
+  let paymentDue = _qs('#edit-payment-due')
+  editFormContainer.classList.remove('hide')
+  editFormContainer.classList.add('show')
+  street.value = currentInvoice.senderAddress.street
+  city.value = currentInvoice.senderAddress.city
+  zipcode.value = currentInvoice.senderAddress.postCode
+  country.value = currentInvoice.senderAddress.country
+  clientName.value = currentInvoice.clientName
+  clientEmail.value = currentInvoice.clientEmail
+  clientAddress.value = currentInvoice.clientAddress.street
+  clientCity.value = currentInvoice.clientAddress.city
+  clientZip.value = currentInvoice.clientAddress.postCode
+  clientCountry.value = currentInvoice.clientAddress.country
+  paymentDue.value = currentInvoice.paymentDue
+}
+
 addItem.addEventListener('click', showListItemInput)
 
 saveBtn.addEventListener('click', (e) => {
@@ -636,7 +663,6 @@ saveBtn.addEventListener('click', (e) => {
       formContainer.classList.remove('show')
       formContainer.classList.add('hide')
     }, 500)
-    console.log(appState)
     clearFormInputs()
   }
 })
@@ -690,32 +716,8 @@ siteContent.addEventListener('click', (e) => {
   }
 
   if (e.target.id === 'item-edit') {
-    console.log(currentInvoice)
-    let street = _qs('#edit-street')
-    let city = _qs('#edit-city')
-    let zipcode = _qs('#edit-zipcode')
-    let country = _qs('#edit-country')
-    let clientName = _qs('#edit-client-name')
-    let clientEmail = _qs('#edit-client-email')
-    let clientAddress = _qs('#edit-client-address')
-    let clientCity = _qs('#edit-client-city')
-    let clientZip = _qs('#edit-client-zipcode')
-    let clientCountry = _qs('#edit-client-country')
-    let paymentDue = _qs('#edit-payment-due')
-
-    editFormContainer.classList.remove('hide')
-    editFormContainer.classList.add('show')
-    street.value = currentInvoice.senderAddress.street
-    city.value = currentInvoice.senderAddress.city
-    zipcode.value = currentInvoice.senderAddress.postCode
-    country.value = currentInvoice.senderAddress.country
-    clientName.value = currentInvoice.clientName
-    clientEmail.value = currentInvoice.clientEmail
-    clientAddress.value = currentInvoice.clientAddress.street
-    clientCity.value = currentInvoice.clientAddress.city
-    clientZip.value = currentInvoice.clientAddress.postCode
-    clientCountry.value = currentInvoice.clientAddress.country
-    paymentDue.value = currentInvoice.paymentDue
+    // getEditFormHTML()
+    getEditFormHTML()
   }
 })
 
@@ -759,6 +761,10 @@ document.body.addEventListener('click', (e) => {
   if (e.target.id === 'item-delete-mobile' && pageID !== 'index') {
     toElTopo()
     showDeleteConfirm();
+  }
+
+  if (e.target.id === 'item-edit-mobile' && pageID !== 'index') {
+    getEditFormHTML()
   }
 
   if (e.target.dataset.action === 'cancel') {
