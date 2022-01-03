@@ -322,7 +322,7 @@ const checkForEmpty = () => {
     } 
   })
   // ======================GRABBING DYNAMICALLY ADDED DOM ELEMENTS =======
-  const inputLineItem = _qsAll('.input-line-item')
+  const inputLineItem = _qsAll('.line-item-item')
   inputLineItem.forEach(item => {
     if (item.value === '') {
       errors.push(item)
@@ -413,7 +413,7 @@ const createSingleListItem = () => {
         <div class="label-wrap">
           <label class="input-label" for="project-description">Qty. </label>
         </div>
-        <input class="input-text line-item-item line-item-qty" type="text" name="line-item-qty" placeholder="1">
+        <input class="input-text line-item-item line-item-qty" type="number" name="line-item-qty" placeholder="1">
       </div>
       <div class="form-group">
         <div class="label-wrap">
@@ -437,10 +437,6 @@ const createSingleListItem = () => {
   let random = Math.floor(Math.random() * 999999)
   div.setAttribute('data-id', random)
   div.innerHTML = html
-  // let obj = {}
-  // obj.id = `${random}`
-  // obj.item = div
-  // tempLineItems.unshift(obj)
   return div
 }
 
@@ -559,6 +555,14 @@ const updateLocalState = () => {
   localStorage.setItem('invoice-data', JSON.stringify(appState))
 }
 
+const toElTopo = () => {
+  window.scrollTo({
+    top: 0,
+    left: 0,
+    behavior: 'smooth'
+  });
+}
+
 const getLineItemsAndAddToObj = () => {
   let tempObj = {}
   let tempArr = [];
@@ -593,6 +597,10 @@ addItem.addEventListener('click', showListItemInput)
 saveBtn.addEventListener('click', (e) => {
   e.preventDefault()
   const errors = checkForEmpty()
+  if(errors.length > 0) {
+    toElTopo()
+    // SHOW ERROR MSG
+  }
   if (errors.length === 0) {
     spinner.classList.add('show')
     let createdDate = createDate()
@@ -605,11 +613,7 @@ saveBtn.addEventListener('click', (e) => {
     let invoiceHeader = document.querySelector('#invoice-header');
     invoiceHeader.insertAdjacentElement('afterend', insertInvoiceToPage);
     // clearInputs()
-    window.scrollTo({
-      top: 0,
-      left: 0,
-      behavior: 'smooth'
-    });
+    toElTopo()
     setTimeout(() => {
       spinner.classList.remove('show')
       formContainer.classList.remove('show')
@@ -619,8 +623,10 @@ saveBtn.addEventListener('click', (e) => {
 })
 
 siteContent.addEventListener('click', (e) => {
+  toElTopo()
   let pageID = _qs('body').dataset.page
   if(e.target.dataset.id && pageID === 'index') {
+
     let selectedID = e.target.dataset.id;
     UIState.selectedID = selectedID;
     let selectedInvoice = getInvoiceByID(selectedID)[0];
@@ -635,6 +641,7 @@ siteContent.addEventListener('click', (e) => {
       updateInvoiceBtnStatus(elmBTN)
       let mobileControls = _qs('.mobile-status-controls');
       mobileControls.style.display = 'block'
+      mobileControls.classList.add('show')
     } else {
       let elmBTN = _qs('#mark-paid')
       updateInvoiceBtnStatus(elmBTN)
@@ -695,6 +702,7 @@ document.body.addEventListener('click', (e) => {
   }
 
   if(e.target.id ==='item-delete-mobile' && pageID !== 'index' ) {
+    toElTopo()
     showDeleteConfirm();
   }
 
@@ -712,6 +720,8 @@ document.body.addEventListener('click', (e) => {
 
 
 window.addEventListener('load', (event) => {
+  let mobileControls = _qs('.mobile-status-controls');
+
   const url = './data.json'
   let invoiceData = localStorage.getItem('invoice-data')
   if (invoiceData) {
@@ -739,12 +749,13 @@ window.addEventListener('resize', () => {
   if(window.innerWidth <= 607 && pageID !== 'index') {
     let elmBTN = _qs('#mark-paid-mobile')
     updateInvoiceBtnStatus(elmBTN)
-    let mobileControls = _qs('.mobile-status-controls');
-    mobileControls.style.display = 'block'
+    mobileControls.classList.add('show')
+    // mobileControls.style.display = 'block'
   } else if(window.innerWidth >= 607 && pageID !== 'index' ) {
     let elmBTN = _qs('#mark-paid')
     updateInvoiceBtnStatus(elmBTN)
-    mobileControls.style.display = 'none'
+    mobileControls.classList.remove('show')
+    // mobileControls.style.display = 'none'
   }
 })
 
