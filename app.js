@@ -34,6 +34,7 @@ const dataDiscardBtn = _qs('#data-discard')
 const inputText = _qsAll('.input-text')
 const addItem = _qs('.add-item')
 const spinner = _qs('.spinner')
+const saveBtn = _qs('.btn-send');
 let deleteModalContainer = _qs('.delete-modal-container');
 let lineItemsTableRow = _qs('.line-items-table-row')
 
@@ -79,7 +80,7 @@ const invoiceHeaderHTML = () => {
           <p class="invoice-header-title__amt"><span>7</span> Invoices</p>
         </div>
         <div class="invoice-header-filter-container">
-          <h3>Filter <span class="invoice-header-span">by status</span><img src="./assets/icon-arrow-down.svg" alt="arrow"></span></h3>
+          <h3>Filter <span class="invoice-header-span">by status</span><img src="https://res.cloudinary.com/rjsmedia/image/upload/v1641118944/invoicer/icon-arrow-down_ispveb.svg" alt="arrow"></span></h3>
         </div>
         <div class="invoice-header-button-container">
           <button id="create-new-invoice" class="btn btn-1"><span>+</span> New</button>
@@ -103,6 +104,20 @@ let createInvoice = (item) => {
   div.innerHTML = html;
   siteContent.appendChild(div)
 }
+let getNewInvoiceHTML = (item) => {
+  let div = document.createElement('div')
+  div.className = 'single-invoice show_invoice';
+  div.setAttribute('data-id', item.id)
+  let dueDate = convertDate(item.paymentDue)
+  let html = `
+    <h2 data-id=${item.id} class="single-invoice__id show_invoice"><span>#</span>${item.id}</h2>
+    <p data-id=${item.id} class="single-invoice__date show_invoice">Due ${dueDate}</p>
+    <p data-id=${item.id} class="single-invoice__vendor-name show_invoice">${item.clientName}</p>
+    <h3 data-id=${item.id} class="single-invoice__amt show_invoice">$${item.total}</h3>
+    <p data-id=${item.id} class="single-invoice__status ${item.status} show_invoice">${item.status}</p>`
+  div.innerHTML = html;
+  return div;
+}
 
 const setPageIds = (elm, id) => {
   elm.setAttribute('data-page', id)
@@ -123,6 +138,7 @@ const loadPage = (state) => {
 
 
 const getSingleInvoiceHTML = (invoice) => {
+  
   const {
     clientAddress, 
     clientName,
@@ -145,7 +161,7 @@ const getSingleInvoiceHTML = (invoice) => {
         <div class="view-single-wrapper">
         <div class="view-single-container">  
           <div class="single-invoice-link">
-            <h3 id="redirect-home"><span><img src="./assets/icon-arrow-left.svg" alt="arrow"></span>Go Back</h3>
+            <h3 id="redirect-home"><span><img src="https://res.cloudinary.com/rjsmedia/image/upload/v1641118944/invoicer/icon-arrow-left_wk96qn.svg" alt="arrow"></span>Go Back</h3>
           </div>
           <div class="status-edit-bar flex">
             <div class="status-edit-bar__status">
@@ -204,19 +220,15 @@ const getSingleInvoiceHTML = (invoice) => {
                 <p>Price</p>
                 <p>Total</p>
               </div>
-              <div class="invoice-summary__items--item grid">
-                <p class="job-type">Banner Design</p>
-                <p class="item_hide-me">3</p>
-                <p class="item_hide-me">$297.76</p>
-                <p class="single-invoice-total">$459.00</p>
-              </div>
-              <div class="invoice-summary__items--item grid">
-                <p class="job-type">Banner Design</p>
-                <p class="item_hide-me">3</p>
-                <p class="item_hide-me">$297.76</p>
-                <p class="single-invoice-total">$459.00</p>
-              </div>
+              ${items.map(item => {
+                return (
+                  `<div class="invoice-summary__items--item grid">
+                    <p class="job-type">${item.name} ${item.quantity} ${item.price}</p>
 
+                    <p class="single-invoice-total">$${item.total}</p>
+                  </div>`
+                )
+              }).join('')}
             </div>
             <div class="invoice-summary__totals-bar flex">
               <p>Amount Due</p>
@@ -237,32 +249,32 @@ const getSingleInvoiceHTML = (invoice) => {
 // =============================NEW INVOICE FORM ==============================
 let newInvoice = {
   id: generateID(),
-  createdAt: "",
-  paymentDue: "",
-  description: "",
-  paymentTerms: "",
-  clientName: "",
-  clientEmail: "",
+  createdAt: null,
+  paymentDue: null,
+  description: null,
+  paymentTerms: null,
+  clientName: null,
+  clientEmail: null,
   status: "pending",
   senderAddress: {
-    street: "",
-    city: "",
-    postCode: "",
-    country: ""
+    street: null,
+    city: null,
+    postCode: null,
+    country: null
   },
   clientAddress: {
-    street: "",
-    city: "",
-    postCode: "",
-    country: ""
+    street: null,
+    city: null,
+    postCode: null,
+    country: null
   },
   items: [
-    // {
-    //   name: "Banner Design",
-    //   quantity: 1,
-    //   price: 156.00,
-    //   total: 156.00
-    // },
+    {
+      name: "Banner Design",
+      quantity: 1,
+      price: 156.00,
+      total: 156.00
+    }
     // {
     //   name: "Email Design",
     //   quantity: 2,
@@ -307,7 +319,7 @@ const checkForEmpty = () => {
     if (input.value === '') {
       errors.push(input)
       addInputErrorClass(input, 'error')
-    }
+    } 
   })
   // ======================GRABBING DYNAMICALLY ADDED DOM ELEMENTS =======
   const inputLineItem = _qsAll('.input-line-item')
@@ -315,7 +327,7 @@ const checkForEmpty = () => {
     if (item.value === '') {
       errors.push(item)
       addInputErrorClass(item, 'error')
-    }
+    } 
   })
   return errors
 }
@@ -337,9 +349,12 @@ const removeInputErrorClass = (elem, className) => {
 const updateNewInvoiceState = (obj, input) => {
   let keys = input.name.split('-')
   let lastArrElem = keys[keys.length - 1]
-  let parentID = input.parentElement.parentElement.dataset.id
-  if (keys.length === 3 && lastArrElem === 'lineiteminput') {
-    updateLineItemState(obj, keys, input, parentID)
+
+  // let parentID = input.parentElement.parentElement.dataset.id
+  let parentID = '';
+  if (keys.length === 3 && (lastArrElem === 'name' || lastArrElem === 'qty' || lastArrElem === 'price')) {
+    console.log('FIGURE OUT')
+    // updateLineItemState(obj, keys, input, parentID)
   } else {
     updateInputItemState(obj, keys, input)
   }
@@ -348,19 +363,19 @@ const updateNewInvoiceState = (obj, input) => {
 const updateLineItemState = (obj, keys, input, parentID) => {
   let filter = keys[1]
   let foundItem = obj[keys[0]].filter(item => item.id === parentID)[0]
-  foundItem[filter] = input.value
-  foundItem.total = parseInt(foundItem.quantity) * parseFloat(foundItem.price)
-  let lineTotalElem = input.parentElement.parentElement.children[3].children[0];
-  lineTotalElem.textContent = `$${foundItem.total}`
-  let total = () => {
-    let result = 0;
-    obj.items.forEach(item => {
-      result += item.total
-    })
-    return parseFloat(result)
-  }
-  obj.total = total()
-  console.log(obj)
+  // foundItem[filter] = input.value
+  // foundItem.total = parseInt(foundItem.quantity) * parseFloat(foundItem.price)
+  // let lineTotalElem = input.parentElement.parentElement.children[3].children[0];
+  // lineTotalElem.textContent = `$${foundItem.total}`
+  // let total = () => {
+  //   let result = 0;
+  //   obj.items.forEach(item => {
+  //     result += item.total
+  //   })
+  //   return parseFloat(result)
+  // }
+  // obj.total = total()
+  // console.log(obj)
 }
 
 const updateInputItemState = (obj, keys, input) => {
@@ -383,59 +398,59 @@ const updateInputItemState = (obj, keys, input) => {
 
 }
 
+
+
 const createSingleListItem = () => {
   let html = `
-            <div class="form-group">
-              <input type="text" class="input-line-item input-text" name="items-name-lineiteminput"
-                placeholder="Add Item Name">
-            </div>
-            <div class="form-group">
-              <input type="text" class="input-line-item input-text" name="items-quantity-lineiteminput" placeholder="1">
-            </div>
-            <div class="form-group">
-              <input type="text" class="input-line-item input-text" name="items-price-lineiteminput"
-                placeholder="Add Price">
-            </div>
-            <div class="form-group">
-              <p class="line-item-totals">$0</p>
-            </div>
-            <div class="form-group form-group-trash">
-              <img class="line-item-delete" src="./assets/icon-delete.svg" alt="">
-            </div>
+      <div class="form-group">
+        <div class="label-wrap">
+          <label class="input-label" for="project-description">Item Name </label>
+        </div>
+        <input class="input-text line-item-item line-item-name" type="text" name="line-item-name"
+          placeholder="Add Item Name">
+      </div>
+      <div class="form-group">
+        <div class="label-wrap">
+          <label class="input-label" for="project-description">Qty. </label>
+        </div>
+        <input class="input-text line-item-item line-item-qty" type="text" name="line-item-qty" placeholder="1">
+      </div>
+      <div class="form-group">
+        <div class="label-wrap">
+          <label class="input-label" for="project-description">Price </label>
+        </div>
+        <input class="input-text line-item-item line-item-price" type="text" name="line-item-price"
+          placeholder="Add Price">
+      </div>
+      <div class="form-group">
+        <div class="label-wrap">
+          <label class="input-label" for="project-description">Line Total </label>
+        </div>
+        <p class="line-item-total">$0.00</p>
+      </div>
+      <div class="form-group form-group-trash">  
+        <img class="line-item-delete" src="https://res.cloudinary.com/rjsmedia/image/upload/v1641118944/invoicer/icon-delete_pvdfsa.svg" alt="">
+      </div>
   `
   const div = document.createElement('div')
-  div.classList = 'form-col-5 line-item-inputs'
+  div.classList = 'form-col-5-mod'
   let random = Math.floor(Math.random() * 999999)
   div.setAttribute('data-id', random)
   div.innerHTML = html
-  let obj = {}
-  obj.id = `${random}`
-  obj.item = div
-  tempLineItems.unshift(obj)
+  // let obj = {}
+  // obj.id = `${random}`
+  // obj.item = div
+  // tempLineItems.unshift(obj)
   return div
 }
 
 
 const showListItemInput = (e) => {
   e.preventDefault()
-  const parent = e.target.parentElement;
-  createSingleListItem()
-  lineItemsTableRow.classList.add('show')
-  tempLineItems.forEach(item => {
-    parent.prepend(item.item)
-  })
+  const parent = e.target.parentElement.previousElementSibling;
+  let newLineItem = createSingleListItem();
+  parent.insertAdjacentElement('afterend', newLineItem)
 
-  let lineItemInputs = _qsAll('.line-item-inputs')
-  newInvoice.items = []
-  lineItemInputs.forEach(lineItem => {
-    let itemObj = {}
-    itemObj.name = ''
-    itemObj.quantity = 0
-    itemObj.price = 0
-    itemObj.total = 0
-    itemObj.id = lineItem.dataset.id
-    newInvoice.items.push(itemObj)
-  })
 }
 
 const removeErrorsAndUpdateState = (evt, cls1, cls2, cls3) => {
@@ -544,8 +559,68 @@ const updateLocalState = () => {
   localStorage.setItem('invoice-data', JSON.stringify(appState))
 }
 
+const getLineItemsAndAddToObj = () => {
+  let tempObj = {}
+  let tempArr = [];
+  let lineItems = _qsAll('.line-item-item');
+  let counter = 0;
+  lineItems.forEach((item, i) => {
+    console.log(counter, i)
+    if(item.name === 'line-item-qty') {
+        tempObj.quantity = item.value;
+      }
+    if(item.name === 'line-item-name') {
+        tempObj.name = item.value;
+      }
+    if(item.name === 'line-item-price') {
+        tempObj.price = item.value;
+     }    
+    counter++
+    if(counter === 3) {
+      counter = 0;
+      tempObj.total = tempObj.quantity * tempObj.price
+      tempArr.push(tempObj)
+      tempObj = {};
+    } 
+  })
+  console.log(tempArr)
+  newInvoice.items = tempArr
+}
+
+addItem.addEventListener('click', showListItemInput)
+
+
+saveBtn.addEventListener('click', (e) => {
+  e.preventDefault()
+  const errors = checkForEmpty()
+  if (errors.length === 0) {
+    spinner.classList.add('show')
+    let createdDate = createDate()
+    newInvoice.createdAt = createdDate
+    //  LOOP OVER LINE ITEMS AND GET VALUES
+    getLineItemsAndAddToObj();
+    appState.unshift(newInvoice)
+    localStorage.setItem('invoice-data', JSON.stringify(appState))
+    let insertInvoiceToPage = getNewInvoiceHTML(newInvoice);
+    let invoiceHeader = document.querySelector('#invoice-header');
+    invoiceHeader.insertAdjacentElement('afterend', insertInvoiceToPage);
+    // clearInputs()
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: 'smooth'
+    });
+    setTimeout(() => {
+      spinner.classList.remove('show')
+      formContainer.classList.remove('show')
+      formContainer.classList.add('hide')
+    }, 500)
+  }
+})
+
 siteContent.addEventListener('click', (e) => {
-  if(e.target.dataset.id) {
+  let pageID = _qs('body').dataset.page
+  if(e.target.dataset.id && pageID === 'index') {
     let selectedID = e.target.dataset.id;
     UIState.selectedID = selectedID;
     let selectedInvoice = getInvoiceByID(selectedID)[0];
@@ -581,13 +656,31 @@ siteContent.addEventListener('click', (e) => {
 
   if(e.target.id === 'item-delete') {
     showDeleteConfirm();
-    // deleteInvoice()
   }
+  if(e.target.id === 'create-new-invoice') {
+    formContainer.classList.remove('hide')
+    formContainer.classList.add('show')
+  }
+
 })
 
 toggleTheme.addEventListener('click', () => {
   document.querySelector('body').classList.toggle('light')
 })
+
+
+// ========== KEY STROKES ====================
+formContainer.addEventListener('keyup', (e) => {
+  removeErrorsAndUpdateState(e, 'input-line-item', 'input-text', 'error')
+})
+
+// ========== CHANGE ====================
+formContainer.addEventListener('change', (e) => {
+  removeErrorsAndUpdateState(e, 'input-line-item', 'input-text', 'error')
+})
+
+
+
 
 
 // ========================== INITIAL DATA LOADING ==============================
@@ -619,7 +712,6 @@ document.body.addEventListener('click', (e) => {
 
 
 window.addEventListener('load', (event) => {
-
   const url = './data.json'
   let invoiceData = localStorage.getItem('invoice-data')
   if (invoiceData) {
