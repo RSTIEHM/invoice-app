@@ -1439,6 +1439,12 @@ select .input-text {
   padding: 1rem 0;
   bottom: 0;
   left: 0;
+  visibility: hidden;
+  opacity: 0;
+}
+.mobile-status-controls.show {
+  visibility: visible;
+  opacity: 1;
 }
 
 .mobile-status-edit-bar__edit  {
