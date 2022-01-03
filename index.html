@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" type="image/png" sizes="32x32" href="./assets/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="https://res.cloudinary.com/rjsmedia/image/upload/v1641118944/invoicer/favicon-32x32_iwyqdu.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Spartan:wght@500;700&display=swap" rel="stylesheet">
@@ -15,20 +15,20 @@
 <body class="">
   <div class="spinner">
     <div class="spinner-container">
-      <img src="./assets/spinner.gif" alt="">
+      <img src="https://res.cloudinary.com/rjsmedia/image/upload/v1641118947/invoicer/spinner_zwwzra.gif" alt="">
     </div>
   </div>
   <div class="site-wrapper">
 
     <header id="header">
       <div class="header-logo-container">
-        <img src="./assets/logo.svg" alt="" class="header-logo">
+        <img src="https://res.cloudinary.com/rjsmedia/image/upload/v1641118946/invoicer/logo_d5nqrk.svg" alt="" class="header-logo">
       </div>
       <div class="header-sun-icon-container">
-        <img src="./assets/icon-sun.svg" alt="" class="header-sun-icon">
+        <img src="https://res.cloudinary.com/rjsmedia/image/upload/v1641118946/invoicer/icon-sun_aaskxo.svg" alt="" class="header-sun-icon">
       </div>
       <div class="header-avatar-container">
-        <img src="./assets/image-avatar.jpg" class="header-avatar" alt="">
+        <img src="https://res.cloudinary.com/rjsmedia/image/upload/v1641118946/invoicer/image-avatar_fdawr9.jpg" class="header-avatar" alt="">
       </div>
     </header>
     <div class="site-content">
@@ -60,12 +60,12 @@
   </div>
 
 
-
-  <section id="form-container" class="new-invoice" data-type="new-invoice">
+<!-- FORM -->
+  <section id="form-container" class="new-invoice hide" data-type="new-invoice">
     <div class="form-wrapper">
       <div class="form-content">
 
-        <form action="#" class="form new-form">
+        <form action="#" class="form new-form" method="POST">
           <div class="form-padding-wrapper">
 
 
@@ -191,80 +191,63 @@
             <input id="project-description" type="text" class="input-text" name="description"
               placeholder="Project Description">
           </div>
+          <h2 class="form-group new-form-item-desc">Item List</h2>
 
-          <!-- NEW ITEMS GO HERE -->
-          <div class="form-col-5 line-items-table-row">
-            <div class="form-group no-margin-bottom">
+<!-- START NEW ITEM -->
+          <div class="form-col-5-mod">
+            <div class="form-group">
               <div class="label-wrap">
                 <label class="input-label" for="project-description">Item Name </label>
-                <!-- <span class="input-label-msg">can't be empty</span> -->
               </div>
-            </div>
-            <div class="form-group no-margin-bottom">
-              <div class="label-wrap">
-                <label class="input-label" for="project-description">Qty. </label>
-                <!-- <span class="input-label-msg">can't be empty</span> -->
-              </div>
-            </div>
-            <div class="form-group no-margin-bottom">
-              <div class="label-wrap">
-                <label class="input-label" for="project-description">Price </label>
-                <!-- <span class="input-label-msg">can't be empty</span> -->
-              </div>
-            </div>
-            <div class="form-group no-margin-bottom">
-              <div class="label-wrap">
-                <label class="input-label" for="project-description">Line Total </label>
-                <!-- <span class="input-label-msg">can't be empty</span> -->
-              </div>
-            </div>
-            <div class="form-group no-margin-bottom">
-              <div class="label-wrap">
-                <label class="input-label" for="project-description">Delete </label>
-                <!-- <span class="input-label-msg">can't be empty</span> -->
-              </div>
-            </div>
-          </div>
-
-          <!-- <div class="form-col-5">
-            <div class="form-group">
-              <input id="line-item-name" type="text" class="input-text" name="line-item-name"
+              <input class="input-text line-item-item line-item-name" type="text" name="line-item-name"
                 placeholder="Add Item Name">
             </div>
             <div class="form-group">
-              <input id="line-item-qty" type="text" class="input-text" name="line-item-qty" placeholder="1">
+              <div class="label-wrap">
+                <label class="input-label" for="project-description">Qty. </label>
+              </div>
+              <input class="input-text line-item-item line-item-qty" type="text" name="line-item-qty" placeholder="1">
             </div>
             <div class="form-group">
-              <input id="line-item-price" type="text" class="input-text" name="line-item-price"
+              <div class="label-wrap">
+                <label class="input-label" for="project-description">Price </label>
+              </div>
+              <input class="input-text line-item-item line-item-price" type="text" name="line-item-price"
                 placeholder="Add Price">
             </div>
             <div class="form-group">
-              <p id="line-item-total">156.00</p>
+              <div class="label-wrap">
+                <label class="input-label" for="project-description">Line Total </label>
+              </div>
+              <p class="line-item-total">$0.00</p>
             </div>
-            <div class="form-group form-group-trash">
-              <img id="line-item-delete" src="./assets/icon-delete.svg" alt="">
+            <div class="form-group form-group-trash">  
+              <img class="line-item-delete" src="https://res.cloudinary.com/rjsmedia/image/upload/v1641118944/invoicer/icon-delete_pvdfsa.svg" alt="">
             </div>
-          </div> -->
-          <!-- NEW ITEMS GO HERE -->
+          </div>
+          <!-- END NEW ITEM -->
+
 
           <div class="form-group">
             <button class="btn btn-4-dark btn-full add-item">+ Add New Item</button>
           </div>
 
-          <!-- <div class="form-group save-btn">
-            <button id="data-discard" data-action="data-discard" class="btn btn-4-dark">Discard</button>
-            <button id="data-draft" data-action="data-draft" class="btn btn-4-dark btn-light grid-right">Save As
-              Draft</button>
-            <button id="data-save" data-action="data-save" class="btn btn-1 grid-right">Save & Send</button>
-          </div> -->
-
         </div>
           <div class="form-group">
             <div class="new-form-button-container">
               <button class="form-btn btn-discard" id="data-discard" data-action="data-discard">Discard</button>
-              <button class="form-btn btn-draft" id="data-draft" data-action="data-draft">Save As</button>
-              <button class="form-btn btn-send" id="data-draft" id="data-save" data-action="data-save">Save & Send</button>
+              <div>
+                <button class="form-btn btn-draft" id="data-draft" data-action="data-draft">Save As Draft</button>
+                <button class="form-btn btn-send" id="data-draft" id="data-save" data-action="data-save">Save & Send</button>
+              </div>
             </div>
+            <!-- <div class="new-form-button-container">
+              <button class="form-btn btn-discard" id="data-discard" data-action="data-discard">Discard</button>
+              <div>
+                <button class="form-btn btn-draft" id="data-draft" data-action="data-draft">Save As Draft</button>
+                <button class="form-btn btn-send" id="data-draft" id="data-save" data-action="data-save">Save & Send</button>
+              </div>
+            </div> -->
           </div>
         </form>
       </div>
