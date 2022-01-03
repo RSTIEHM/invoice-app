@@ -27,6 +27,7 @@ let paidBTN;
 let toggleTheme = _qs('.header-sun-icon-container')
 const siteContent = _qs('.site-content');
 const formContainer = _qs('#form-container')
+const editFormContainer = _qs('#edit-form-container');
 const createNewInvoice = _qs('#create-new-invoice')
 const formContent = _qs('.form-content')
 const dataSaveBtn = _qs('#data-save')
@@ -37,13 +38,15 @@ const spinner = _qs('.spinner')
 const saveBtn = _qs('.btn-send');
 let deleteModalContainer = _qs('.delete-modal-container');
 let lineItemsTableRow = _qs('.line-items-table-row')
+let inputLabelMsg = _qsAll('.input-label-msg');
+let lineItemDelete = _qsAll('.line-item-delete');
 
 // PAGE FUNCTIONS ========================
 let appState = [];
 let currentInvoice = {};
 let UIState = {
   selectedID: null
-} 
+}
 
 const generateID = () => {
   let id = '';
@@ -86,8 +89,8 @@ const invoiceHeaderHTML = () => {
           <button id="create-new-invoice" class="btn btn-1"><span>+</span> New</button>
         </div>
       </div>`;
-    div.innerHTML = html;
-    return div;
+  div.innerHTML = html;
+  return div;
 }
 
 let createInvoice = (item) => {
@@ -138,20 +141,20 @@ const loadPage = (state) => {
 
 
 const getSingleInvoiceHTML = (invoice) => {
-  
+
   const {
-    clientAddress, 
+    clientAddress,
     clientName,
-    clientEmail, 
-    createdAt, 
-    description, 
-    id, 
-    items, 
-    paymentDue, 
-    paymentTerms, 
-    senderAddress, 
-    status, 
-    total} = invoice;
+    clientEmail,
+    createdAt,
+    description,
+    id,
+    items,
+    paymentDue,
+    paymentTerms,
+    senderAddress,
+    status,
+    total } = invoice;
 
 
 
@@ -171,10 +174,10 @@ const getSingleInvoiceHTML = (invoice) => {
             <div class="status-edit-bar__edit flex">
               <button id="item-edit" class="btn btn-3-dark" data-id="${id}">Edit</button>
               <button id="item-delete" class="btn btn-5-danger" data-id="${id}">Delete</button>
-              ${status === 'paid' ? 
-              '<button disabled="true" id="mark-paid"  data-id="${id}" class="btn btn-2 btn-fade">Invoice Paid</button>' : 
-              
-              `<button id="mark-paid"  data-id="${id}" class="btn btn-2">Mark as Paid</button>`}
+              ${status === 'paid' ?
+      '<button disabled="true" id="mark-paid"  data-id="${id}" class="btn btn-2 btn-fade">Invoice Paid</button>' :
+
+      `<button id="mark-paid"  data-id="${id}" class="btn btn-2">Mark as Paid</button>`}
             </div>
           </div>
 
@@ -195,9 +198,9 @@ const getSingleInvoiceHTML = (invoice) => {
             <div class="invoice-summary__details">
               <div class="invoice-summary__dates">
                 <p class="invoice-summary__headers">Invoice Date</p>  
-                <h2 class="invoice-summary__deats">${createdAt}</h2>
+                <h2 class="invoice-summary__deats">${convertDate(createdAt)}</h2>
                 <p class="invoice-summary__headers">Payment Due</p>  
-                <h2 class="invoice-summary__deats">${paymentDue}</h2>
+                <h2 class="invoice-summary__deats">${convertDate(paymentDue)}</h2>
               </div>
               <div class="invoice-summary__bill--to">
                 <p class="invoice-summary__headers">Bill To</p>  
@@ -221,14 +224,14 @@ const getSingleInvoiceHTML = (invoice) => {
                 <p>Total</p>
               </div>
               ${items.map(item => {
-                return (
-                  `<div class="invoice-summary__items--item grid">
+        return (
+          `<div class="invoice-summary__items--item grid">
                     <p class="job-type">${item.name} ${item.quantity} ${item.price}</p>
 
                     <p class="single-invoice-total">$${item.total}</p>
                   </div>`
-                )
-              }).join('')}
+        )
+      }).join('')}
             </div>
             <div class="invoice-summary__totals-bar flex">
               <p>Amount Due</p>
@@ -238,7 +241,6 @@ const getSingleInvoiceHTML = (invoice) => {
         </div>
       </div>     
   `;
-
   div.innerHTML = html;
   return div;
 }
@@ -269,18 +271,7 @@ let newInvoice = {
     country: null
   },
   items: [
-    {
-      name: "Banner Design",
-      quantity: 1,
-      price: 156.00,
-      total: 156.00
-    }
-    // {
-    //   name: "Email Design",
-    //   quantity: 2,
-    //   price: 200.00,
-    //   total: 400.00
-    // }
+
   ],
   total: 0
 }
@@ -315,20 +306,30 @@ const convertDate = (str) => {
 const checkForEmpty = () => {
   let errors = []
   // ======================GRABBING INPUT ELEMENTS  ======================
-  inputText.forEach(input => {
+  inputText.forEach((input, i) => {
+    let msg = input.previousElementSibling.children[1];
+
     if (input.value === '') {
       errors.push(input)
       addInputErrorClass(input, 'error')
-    } 
+      addInputErrorClass(msg, 'error')
+    }
   })
   // ======================GRABBING DYNAMICALLY ADDED DOM ELEMENTS =======
   const inputLineItem = _qsAll('.line-item-item')
   inputLineItem.forEach(item => {
+    let msg = item.previousElementSibling.children[1];
     if (item.value === '') {
       errors.push(item)
       addInputErrorClass(item, 'error')
-    } 
+      addInputErrorClass(msg, 'error')
+    }
   })
+  if (errors.length > 0) {
+    _qs('.form-group-title-span').style.opacity = '1';
+  } else {
+    _qs('.form-group-title-span').style.opacity = '0';
+  }
   return errors
 }
 
@@ -341,20 +342,15 @@ const addInputErrorClass = (elem, className) => {
 
 const removeInputErrorClass = (elem, className) => {
   elem.classList.remove(className)
-  if (elem.previousElementSibling) {
-    elem.previousElementSibling.classList.remove(className)
+  if (elem.previousElementSibling.children[1]) {
+    elem.previousElementSibling.children[1].classList.remove(className)
   }
 }
 
 const updateNewInvoiceState = (obj, input) => {
   let keys = input.name.split('-')
   let lastArrElem = keys[keys.length - 1]
-
-  // let parentID = input.parentElement.parentElement.dataset.id
-  let parentID = '';
   if (keys.length === 3 && (lastArrElem === 'name' || lastArrElem === 'qty' || lastArrElem === 'price')) {
-    console.log('FIGURE OUT')
-    // updateLineItemState(obj, keys, input, parentID)
   } else {
     updateInputItemState(obj, keys, input)
   }
@@ -384,7 +380,6 @@ const updateInputItemState = (obj, keys, input) => {
   } else {
     obj[keys[0]] = input.value
   }
-
   // let total = () => {
   //   let result = 0;
   //   obj.items.forEach(item => {
@@ -395,7 +390,6 @@ const updateInputItemState = (obj, keys, input) => {
   // obj.total = total()
   // console.log(obj)
 
-
 }
 
 
@@ -405,6 +399,7 @@ const createSingleListItem = () => {
       <div class="form-group">
         <div class="label-wrap">
           <label class="input-label" for="project-description">Item Name </label>
+          <span class="input-label-msg">can't be empty</span>
         </div>
         <input class="input-text line-item-item line-item-name" type="text" name="line-item-name"
           placeholder="Add Item Name">
@@ -413,11 +408,12 @@ const createSingleListItem = () => {
         <div class="label-wrap">
           <label class="input-label" for="project-description">Qty. </label>
         </div>
-        <input class="input-text line-item-item line-item-qty" type="number" name="line-item-qty" placeholder="1">
+        <input value="1" class="input-text line-item-item line-item-qty" type="number" name="line-item-qty" placeholder="1">
       </div>
       <div class="form-group">
         <div class="label-wrap">
           <label class="input-label" for="project-description">Price </label>
+          <span class="input-label-msg">can't be empty</span>
         </div>
         <input class="input-text line-item-item line-item-price" type="text" name="line-item-price"
           placeholder="Add Price">
@@ -446,6 +442,14 @@ const showListItemInput = (e) => {
   const parent = e.target.parentElement.previousElementSibling;
   let newLineItem = createSingleListItem();
   parent.insertAdjacentElement('afterend', newLineItem)
+  let allLineItems = _qsAll('.line-item-delete')
+  allLineItems.forEach(item => {
+    console.log(item)
+    item.addEventListener('click', (e) => {
+      console.log(e.target.parentElement.parentElement)
+      e.target.parentElement.parentElement.remove();
+    })
+  })
 
 }
 
@@ -462,7 +466,7 @@ const removeErrorsAndUpdateState = (evt, cls1, cls2, cls3) => {
 const filterInvoicesBy = (type) => {
   let filteredInvoices = [];
   invoicesContainer.innerHTML = ''
-  if(type === 'all') {
+  if (type === 'all') {
     loadPage(appState)
   } else {
     let filteredInvoices = appState.filter(item => item.status === type);
@@ -473,9 +477,9 @@ const filterInvoicesBy = (type) => {
 
 const filterItemsSelect = (e) => {
   let type = ''
-  if(e.target.classList.contains('dropdown-filter-paid')) {
+  if (e.target.classList.contains('dropdown-filter-paid')) {
     type = 'paid'
-  } else if(e.target.classList.contains('dropdown-filter-pending')) {
+  } else if (e.target.classList.contains('dropdown-filter-pending')) {
     type = 'pending'
   } else if (e.target.classList.contains('dropdown-filter-draft')) {
     type = 'draft'
@@ -483,7 +487,6 @@ const filterItemsSelect = (e) => {
     type = 'all'
   }
   filterInvoicesBy(type)
-  
 }
 
 
@@ -501,7 +504,7 @@ const updateInvoicePaidUI = (paidBTN) => {
 
 const updateStatusState = () => {
   appState.map(item => {
-    if(item.id === currentInvoice.id) {
+    if (item.id === currentInvoice.id) {
       return item.status = "paid"
     } else {
       return item;
@@ -510,7 +513,7 @@ const updateStatusState = () => {
 }
 
 const updateInvoiceBtnStatus = (elmBTN) => {
-  if(currentInvoice.status === 'pending') {
+  if (currentInvoice.status === 'pending') {
     elmBTN.classList.remove('btn-fade')
     elmBTN.textContent = 'Mark As Paid'
     elmBTN.disabled = false;
@@ -527,7 +530,7 @@ const deleteInvoice = () => {
   setTimeout(() => {
     siteContent.innerHTML = ''
     loadPage(appState)
-  },250)
+  }, 250)
 }
 
 const showDeleteConfirm = () => {
@@ -569,63 +572,81 @@ const getLineItemsAndAddToObj = () => {
   let lineItems = _qsAll('.line-item-item');
   let counter = 0;
   lineItems.forEach((item, i) => {
-    console.log(counter, i)
-    if(item.name === 'line-item-qty') {
-        tempObj.quantity = item.value;
-      }
-    if(item.name === 'line-item-name') {
-        tempObj.name = item.value;
-      }
-    if(item.name === 'line-item-price') {
-        tempObj.price = item.value;
-     }    
+    if (item.name === 'line-item-qty') {
+      tempObj.quantity = item.value;
+    }
+    if (item.name === 'line-item-name') {
+      tempObj.name = item.value;
+    }
+    if (item.name === 'line-item-price') {
+      tempObj.price = item.value;
+    }
     counter++
-    if(counter === 3) {
+    if (counter === 3) {
       counter = 0;
       tempObj.total = tempObj.quantity * tempObj.price
       tempArr.push(tempObj)
       tempObj = {};
-    } 
+    }
   })
-  console.log(tempArr)
   newInvoice.items = tempArr
+}
+
+const clearFormInputs = () => {
+  let textInputs = _qsAll('.input-text')
+  textInputs.forEach(input => {
+    input.value = ''
+  })
+
+  let lineItems = _qsAll('.form-col-5-mod');
+  lineItems.forEach((item, i) => {
+    if (i >= 1) {
+      item.remove();
+    }
+  })
+
+  let leftOvers = _qsAll('.line-item-qty');
+  leftOvers.forEach(left => {
+    left.value = '1'
+  })
+  // REMOVE EXTRA LINE ITEMS ==========
 }
 
 addItem.addEventListener('click', showListItemInput)
 
-
 saveBtn.addEventListener('click', (e) => {
   e.preventDefault()
   const errors = checkForEmpty()
-  if(errors.length > 0) {
+  if (errors.length > 0) {
     toElTopo()
-    // SHOW ERROR MSG
   }
   if (errors.length === 0) {
     spinner.classList.add('show')
     let createdDate = createDate()
     newInvoice.createdAt = createdDate
-    //  LOOP OVER LINE ITEMS AND GET VALUES
     getLineItemsAndAddToObj();
     appState.unshift(newInvoice)
     localStorage.setItem('invoice-data', JSON.stringify(appState))
     let insertInvoiceToPage = getNewInvoiceHTML(newInvoice);
     let invoiceHeader = document.querySelector('#invoice-header');
     invoiceHeader.insertAdjacentElement('afterend', insertInvoiceToPage);
-    // clearInputs()
     toElTopo()
     setTimeout(() => {
       spinner.classList.remove('show')
       formContainer.classList.remove('show')
       formContainer.classList.add('hide')
     }, 500)
+    console.log(appState)
+    clearFormInputs()
   }
 })
+
+
 
 siteContent.addEventListener('click', (e) => {
   toElTopo()
   let pageID = _qs('body').dataset.page
-  if(e.target.dataset.id && pageID === 'index') {
+  if (e.target.dataset.id && pageID === 'index') {
 
     let selectedID = e.target.dataset.id;
     UIState.selectedID = selectedID;
@@ -636,7 +657,7 @@ siteContent.addEventListener('click', (e) => {
     siteContent.innerHTML = '';
     siteContent.appendChild(singleInvoice)
 
-    if(window.innerWidth <= 607) {
+    if (window.innerWidth <= 607) {
       let elmBTN = _qs('#mark-paid-mobile')
       updateInvoiceBtnStatus(elmBTN)
       let mobileControls = _qs('.mobile-status-controls');
@@ -646,47 +667,81 @@ siteContent.addEventListener('click', (e) => {
       let elmBTN = _qs('#mark-paid')
       updateInvoiceBtnStatus(elmBTN)
     }
-
   }
 
-  if(e.target.id === 'redirect-home') {
+  if (e.target.id === 'redirect-home') {
     siteContent.innerHTML = '';
     loadPage(appState)
   }
 
-  if(e.target.id === 'mark-paid') {
+  if (e.target.id === 'mark-paid') {
     updateStatusState()
     updateLocalState()
     let elmBTN = _qs('#mark-paid')
     updateInvoicePaidUI(elmBTN);
   }
 
-  if(e.target.id === 'item-delete') {
+  if (e.target.id === 'item-delete') {
     showDeleteConfirm();
   }
-  if(e.target.id === 'create-new-invoice') {
+  if (e.target.id === 'create-new-invoice') {
     formContainer.classList.remove('hide')
     formContainer.classList.add('show')
   }
 
+  if (e.target.id === 'item-edit') {
+    console.log(currentInvoice)
+    let street = _qs('#edit-street')
+    let city = _qs('#edit-city')
+    let zipcode = _qs('#edit-zipcode')
+    let country = _qs('#edit-country')
+    let clientName = _qs('#edit-client-name')
+    let clientEmail = _qs('#edit-client-email')
+    let clientAddress = _qs('#edit-client-address')
+    let clientCity = _qs('#edit-client-city')
+    let clientZip = _qs('#edit-client-zipcode')
+    let clientCountry = _qs('#edit-client-country')
+    let paymentDue = _qs('#edit-payment-due')
+
+    editFormContainer.classList.remove('hide')
+    editFormContainer.classList.add('show')
+    street.value = currentInvoice.senderAddress.street
+    city.value = currentInvoice.senderAddress.city
+    zipcode.value = currentInvoice.senderAddress.postCode
+    country.value = currentInvoice.senderAddress.country
+    clientName.value = currentInvoice.clientName
+    clientEmail.value = currentInvoice.clientEmail
+    clientAddress.value = currentInvoice.clientAddress.street
+    clientCity.value = currentInvoice.clientAddress.city
+    clientZip.value = currentInvoice.clientAddress.postCode
+    clientCountry.value = currentInvoice.clientAddress.country
+    paymentDue.value = currentInvoice.paymentDue
+  }
 })
 
-toggleTheme.addEventListener('click', () => {
-  document.querySelector('body').classList.toggle('light')
+
+toggleTheme.addEventListener('click', (e) => {
+  let body = document.querySelector('body');
+  body.classList.toggle('light')
+  if (body.classList.contains('light')) {
+    e.target.src = 'https://res.cloudinary.com/rjsmedia/image/upload/v1641118946/invoicer/icon-sun_aaskxo.svg'
+  } else {
+    e.target.src = 'https://res.cloudinary.com/rjsmedia/image/upload/v1641118946/invoicer/icon-moon_hnybdb.svg'
+  }
 })
 
 
 // ========== KEY STROKES ====================
 formContainer.addEventListener('keyup', (e) => {
   removeErrorsAndUpdateState(e, 'input-line-item', 'input-text', 'error')
+  // checkForEmpty()
 })
 
-// ========== CHANGE ====================
+// ========== CHANGE ===========================
 formContainer.addEventListener('change', (e) => {
   removeErrorsAndUpdateState(e, 'input-line-item', 'input-text', 'error')
+  // checkForEmpty()
 })
-
-
 
 
 
@@ -694,25 +749,25 @@ formContainer.addEventListener('change', (e) => {
 
 document.body.addEventListener('click', (e) => {
   let pageID = _qs('body').dataset.page
-  if(e.target.id === 'mark-paid-mobile' && pageID !== 'index') {
+  if (e.target.id === 'mark-paid-mobile' && pageID !== 'index') {
     updateStatusState()
     updateLocalState()
     let elmBTN = _qs('#mark-paid-mobile')
     updateInvoicePaidUI(elmBTN);
   }
 
-  if(e.target.id ==='item-delete-mobile' && pageID !== 'index' ) {
+  if (e.target.id === 'item-delete-mobile' && pageID !== 'index') {
     toElTopo()
     showDeleteConfirm();
   }
 
-  if(e.target.dataset.action === 'cancel') {
+  if (e.target.dataset.action === 'cancel') {
     hideDeleteConfirm()
   }
-  if(e.target.dataset.action === 'delete') {
+  if (e.target.dataset.action === 'delete') {
     setTimeout(() => {
       hideDeleteConfirm()
-    },50)
+    }, 50)
     deleteInvoice()
     updateLocalState()
   }
@@ -721,7 +776,6 @@ document.body.addEventListener('click', (e) => {
 
 window.addEventListener('load', (event) => {
   let mobileControls = _qs('.mobile-status-controls');
-
   const url = './data.json'
   let invoiceData = localStorage.getItem('invoice-data')
   if (invoiceData) {
@@ -746,12 +800,12 @@ window.addEventListener('load', (event) => {
 window.addEventListener('resize', () => {
   let mobileControls = _qs('.mobile-status-controls');
   let pageID = _qs('body').dataset.page
-  if(window.innerWidth <= 607 && pageID !== 'index') {
+  if (window.innerWidth <= 607 && pageID !== 'index') {
     let elmBTN = _qs('#mark-paid-mobile')
     updateInvoiceBtnStatus(elmBTN)
     mobileControls.classList.add('show')
     mobileControls.style.display = 'block'
-  } else if(window.innerWidth >= 607 && pageID !== 'index' ) {
+  } else if (window.innerWidth >= 607 && pageID !== 'index') {
     let elmBTN = _qs('#mark-paid')
     updateInvoiceBtnStatus(elmBTN)
     mobileControls.classList.remove('show')
@@ -765,33 +819,7 @@ window.addEventListener('resize', () => {
 // ================================ EVENTS LISTENERS ========================================================
 
 
-// dataSaveBtn.addEventListener('click', (e) => {
-//   e.preventDefault()
-//   const errors = checkForEmpty()
-//   if (errors.length === 0) {
-//     spinner.classList.add('show')
 
-//     appState.unshift(newInvoice)
-//     let createdDate = createDate()
-//     newInvoice.createdAt = createdDate
-//     newInvoice = {}
-//     localStorage.setItem('invoice-data', JSON.stringify(appState))
-//     let invoiceData = JSON.parse(localStorage.getItem('invoice-data'))
-//     appState = invoiceData
-//     invoicesContainer.innerHTML = ''
-//     loadPage(appState)
-//     inputText.forEach(input => {
-//       input.value = ''
-//     })
-//     setTimeout(() => {
-//       spinner.classList.remove('show')
-//       formContainer.classList.remove('show')
-//       formContent.classList.remove('show')
-//       window.scrollTo(0, 0)
-//     }, 500)
-//     window.location.assign('index.html');
-//   }
-// })
 
 // dataDiscardBtn.addEventListener('click', (e) => {
 //   tempLineItems = []
@@ -818,52 +846,12 @@ window.addEventListener('resize', () => {
 //   }, 500)
 // })
 
-// createNewInvoice.addEventListener('click', () => {
-//   formContainer.classList.add('show')
-//   formContent.classList.add('show')
-// })
-
-
-// invoicesContainer.addEventListener('click', (e) => {
-//   if (e.target.classList.contains('show_invoice')) {
-//     getSingleInvoice(e.target.dataset.id)
-//   }
-// })
-
-//========== ADDING LIST ITEM ======================
-// addItem.addEventListener('click', showListItemInput)
-
-
-//==========DELETING LIST ITEMS ====================
-// formContainer.addEventListener('click', (e) => {
-//   if (e.target.classList.contains('line-item-delete')) {
-//     let id = parseInt(e.target.parentElement.parentElement.dataset.id);
-//     let parentElem = e.target.parentElement.parentElement
-//     const updatedLineItems = tempLineItems.filter(item => parseInt(item.id) !== id)
-//     const updatedStateItems = newInvoice.items.filter(item => item.id !== `${id}`)
-//     newInvoice.items = updatedStateItems
-//     tempLineItems = updatedLineItems
-//     parentElem.remove()
-//     console.log(tempLineItems.length)
-//     if (tempLineItems.length === 0) {
-//       lineItemsTableRow.classList.remove('show')
-//     }
-//   }
-// })
 
 
 
 // dropdownContent.addEventListener('click', filterItemsSelect)
 
-//========== KEY STROKES ====================
-// formContainer.addEventListener('keyup', (e) => {
-//   removeErrorsAndUpdateState(e, 'input-line-item', 'input-text', 'error')
-// })
 
-//========== CHANGE ====================
-// formContainer.addEventListener('change', (e) => {
-//   removeErrorsAndUpdateState(e, 'input-line-item', 'input-text', 'error')
-// })
 
 
 
