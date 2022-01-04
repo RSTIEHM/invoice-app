@@ -13,6 +13,7 @@
   --clr-white: #f3f0f0;
   --clr-black: #141625;
   --clr-test:#ffffff;
+  --clr-test2:#ffffff;
   
   /* font-sizes */
   --fs-900: 2.2rem;
@@ -645,6 +646,7 @@ select .edit-input-text {
   opacity: 1;
   transform: translateY(75px)  scale(1);
 }
+
 #form-container.hide {
   z-index: -100;
   visibility: hidden;
