@@ -98,13 +98,18 @@ const dataDiscardBtn = _qs('#data-discard')
 const inputText = _qsAll('.input-text')
 const editInputText = _qsAll('.edit-input-text')
 const addItem = _qs('.add-item')
+const editAddItem = _qs('.edit-add-item')
 const spinner = _qs('.spinner')
 const saveBtn = _qs('.btn-send');
+const discardBtn = _qs('.btn-discard');
+const editBtnCancel = _qs('.edit-btn-cancel');
+const draftBtn = _qs('.btn-draft');
 const editBtnUpdate = _qs('.edit-btn-update');
 let deleteModalContainer = _qs('.delete-modal-container');
 let lineItemsTableRow = _qs('.line-items-table-row')
 let inputLabelMsg = _qsAll('.input-label-msg');
 let lineItemDelete = _qsAll('.line-item-delete');
+let invoiceForm = _qsAll('.invoice-form')
 
 // APP STATE ========================
 let appState = [];
@@ -138,9 +143,12 @@ const invoiceHeaderHTML = () => {
 }
 
 const editLineItemHTML = (item, i) => {
-  console.log(item, i)
+  if (item === false && i === false) {
+    item = ''
+    i = ''
+  }
   return `
-    <div class="form-col-5-mod">
+  <div class="form-col-5-mod">
       <div class="form-group">
         <div class="label-wrap">
           <label class="input-label" for="project-description">Item Name </label>
@@ -176,8 +184,7 @@ const editLineItemHTML = (item, i) => {
           src="https://res.cloudinary.com/rjsmedia/image/upload/v1641118944/invoicer/icon-delete_pvdfsa.svg"
           alt="">
       </div>
-  </div>
-  
+    </div>
   `
 }
 
@@ -212,7 +219,6 @@ let getNewInvoiceHTML = (item) => {
   div.innerHTML = html;
   return div;
 }
-
 
 const getSingleInvoiceHTML = (invoice) => {
   const {
@@ -320,6 +326,7 @@ const getSingleInvoiceHTML = (invoice) => {
 
 const createSingleListItemHTML = () => {
   let html = `
+
       <div class="form-group">
         <div class="label-wrap">
           <label class="input-label" for="project-description">Item Name </label>
@@ -351,6 +358,7 @@ const createSingleListItemHTML = () => {
       <div class="form-group form-group-trash">  
         <img class="line-item-delete" src="https://res.cloudinary.com/rjsmedia/image/upload/v1641118944/invoicer/icon-delete_pvdfsa.svg" alt="">
       </div>
+  
   `
   const div = document.createElement('div')
   div.classList = 'form-col-5-mod'
@@ -415,7 +423,7 @@ const newInvoiceReset = () => {
       country: null
     },
     items: [
-  
+
     ],
     total: 0
   }
@@ -442,17 +450,21 @@ const checkForEmpty = (inputElem) => {
   let errors = []
   // ======================GRABBING INPUT ELEMENTS  ======================
   inputElem.forEach((input, i) => {
-    console.log(input)
     let msg = input.previousElementSibling.children[1];
     if (input.value === '') {
-      console.log(input, 'error')
       errors.push(input)
       addInputErrorClass(input, 'error')
       addInputErrorClass(msg, 'error')
     }
   })
   // ======================GRABBING DYNAMICALLY ADDED DOM ELEMENTS =======
-  const inputLineItem = _qsAll('.line-item-item')
+  let inputLineItem;
+  if (UIState.isEditing) {
+    inputLineItem = _qsAll('.edit-line-item-item')
+  } else {
+    inputLineItem = _qsAll('.line-item-item')
+  }
+
   inputLineItem.forEach(item => {
     let msg = item.previousElementSibling.children[1];
     if (item.value === '') {
@@ -493,7 +505,6 @@ const updateNewInvoiceState = (obj, input) => {
 
 }
 
-
 const updateInputItemState = (obj, keys, input) => {
   if (keys.length > 1) {
     obj[keys[0]][keys[1]] = input.value
@@ -503,14 +514,22 @@ const updateInputItemState = (obj, keys, input) => {
 }
 
 const showListItemInput = (e) => {
+  console.log(UIState.isEditing)
   e.preventDefault()
   const parent = e.target.parentElement.previousElementSibling;
   let newLineItem = createSingleListItemHTML();
+  let edit
+  if (UIState.isEditing) {
+    edit = 'edit-'
+  } else {
+    edit = ''
+  }
+
   parent.insertAdjacentElement('afterend', newLineItem)
   let allLineItems = _qsAll('.line-item-delete')
   allLineItems.forEach(item => {
     item.addEventListener('click', (e) => {
-      if(e.target.id !== 'trash-constant') {
+      if (e.target.id !== `${edit}trash-constant`) {
         e.target.parentElement.parentElement.remove();
       }
     })
@@ -554,8 +573,6 @@ const filterItemsSelect = (e) => {
   filterInvoicesBy(type)
 }
 
-
-
 const updateInvoicePaidUI = (paidBTN) => {
   paidBTN.classList.add('btn-fade')
   paidBTN.disabled = true;
@@ -589,7 +606,7 @@ const updateInvoiceBtnStatus = (elmBTN) => {
   } else {
     elmBTN.classList.add('btn-fade')
     elmBTN.textContent = 'Draft Mode'
-    elmBTN.disabled = true; 
+    elmBTN.disabled = true;
   }
 }
 
@@ -672,8 +689,6 @@ const clearFormInputs = () => {
 }
 
 const getEditFormHTML = () => {
-  console.log(UIState)
-  console.log(UIState.currentInvoice)
   let street = _qs('#edit-street')
   let city = _qs('#edit-city')
   let zipcode = _qs('#edit-zipcode')
@@ -700,67 +715,100 @@ const getEditFormHTML = () => {
   clientCountry.value = UIState.currentInvoice.clientAddress.country
   paymentDue.value = UIState.currentInvoice.paymentDue
   projectDescription.value = UIState.currentInvoice.description
-  if(UIState.currentInvoice.items.length > 0) {
+  if (UIState.currentInvoice.items.length > 0) {
     let container = _qs('.edit-line-items-wrapper');
-
     UIState.currentInvoice.items.forEach((item, i) => {
       let lineItem = editLineItemHTML(item, i);
-      container.insertAdjacentHTML('afterbegin', lineItem)
+      container.insertAdjacentHTML('beforeend', lineItem)
     })
   }
+}
 
+const sumLineItems = () => {
+  let sumNum = newInvoice.items.map(item => item.price * item.quantity)
+  let total = 0;
+  sumNum.forEach(item => total += item)
+  newInvoice.total = total
+}
+
+const setInvoiceToAppState = () => {
+  console.log(newInvoice.status)
+  getLineItemsAndAddToObj()
+  sumLineItems()
+  let createdDate = createDate()
+  newInvoice.createdAt = createdDate
+  appState.unshift(newInvoice)
+  console.log(appState)
+  localStorage.setItem('invoice-data', JSON.stringify(appState))
+  let insertInvoiceToPage = getNewInvoiceHTML(newInvoice);
+  let invoiceHeader = document.querySelector('#invoice-header');
+  invoiceHeader.insertAdjacentElement('afterend', insertInvoiceToPage);
+  toElTopo()
+  setTimeout(() => {
+    spinner.classList.remove('show')
+    formContainer.classList.remove('show')
+    formContainer.classList.add('hide')
+  }, 500)
+  clearFormInputs()
+  newInvoiceReset()
 }
 
 addItem.addEventListener('click', showListItemInput)
+editAddItem.addEventListener('click', showListItemInput)
+
 
 saveBtn.addEventListener('click', (e) => {
-
   e.preventDefault()
-  // THIS COULD BE USED FOR BOTH --- PASS IN inputTEXT or EDITInputTEXT
   const errors = checkForEmpty(inputText)
   if (errors.length > 0) {
     toElTopo()
   }
-
   if (errors.length === 0 && UIState.isEditing === false) {
-    spinner.classList.add('show')
-    let createdDate = createDate()
-    newInvoice.createdAt = createdDate
-    getLineItemsAndAddToObj();
-    appState.unshift(newInvoice)
-    localStorage.setItem('invoice-data', JSON.stringify(appState))
-    let insertInvoiceToPage = getNewInvoiceHTML(newInvoice);
-    let invoiceHeader = document.querySelector('#invoice-header');
-    invoiceHeader.insertAdjacentElement('afterend', insertInvoiceToPage);
-    toElTopo()
-    setTimeout(() => {
-      spinner.classList.remove('show')
-      formContainer.classList.remove('show')
-      formContainer.classList.add('hide')
-    }, 500)
-    clearFormInputs()
-    //RESET TEMP OBJ
-    newInvoiceReset()
-
-  } else if(errors.length === 0 && UIState.isEditing === true) {
-    spinner.classList.add('show')
-    getLineItemsAndAddToObj();
-    console.log(newInvoice)
+    setInvoiceToAppState()
   }
 })
 
+discardBtn.addEventListener('click', (e) => {
+  e.preventDefault()
+  toElTopo()
+  formContainer.classList.remove('show')
+  formContainer.classList.add('hide')
+})
+
+draftBtn.addEventListener('click', (e) => {
+  e.preventDefault()
+  const errors = checkForEmpty(inputText)
+  if (errors.length > 0) {
+    toElTopo()
+  }
+  if (errors.length === 0 && UIState.isEditing === false) {
+    newInvoice.status = 'draft'
+    setInvoiceToAppState()
+  }
+})
+
+
 editBtnUpdate.addEventListener('click', (e) => {
   e.preventDefault()
-  console.log(UIState.currentInvoice, 'IN EDIT')
+  let temp = _qsAll('.edit-input-text')
   const errors = checkForEmpty(editInputText)
   if (errors.length > 0) {
     toElTopo()
     console.log('ERRORS')
   } else {
+    console.log(UIState.currentInvoice)
+    console.log(newInvoice)
     console.log('NO ERRORS')
   }
 })
 
+editBtnCancel.addEventListener('click', (e) => {
+  e.preventDefault()
+  // WIPE OUT LIST ITEMS
+  editFormContainer.classList.remove('show')
+  editFormContainer.classList.add('hide')
+  _qs('.edit-line-items-wrapper').innerHTML = ''
+})
 
 siteContent.addEventListener('click', (e) => {
   toElTopo()
@@ -810,9 +858,7 @@ siteContent.addEventListener('click', (e) => {
   if (e.target.id === 'item-edit') {
     UIState.isEditing = true
     getEditFormHTML()
-    console.log(editBtnUpdate)
   }
-
 
 })
 
@@ -828,26 +874,36 @@ toggleTheme.addEventListener('click', (e) => {
 })
 
 
+
+
 // ========== KEY STROKES ====================
 formContainer.addEventListener('keyup', (e) => {
   // IS EDITING SET
-  if(UIState.isEditing === false) {
+  if (UIState.isEditing === false) {
+    console.log('IN NEW KEY')
     removeErrorsAndUpdateState(e, 'input-line-item', 'input-text', 'error')
-  } else {
-    // EDIT CHECKING
-    removeErrorsAndUpdateState(e, 'input-line-item', 'edit-input-text', 'error')
   }
-
 })
 
 // ========== CHANGE ===========================
 formContainer.addEventListener('change', (e) => {
   // IS EDITING SET
-  if(UIState.isEditing === false) {
+  if (UIState.isEditing === false) {
+    console.log('IN NEW CHANGE')
     removeErrorsAndUpdateState(e, 'input-line-item', 'input-text', 'error')
-  } else {
-    // EDIT CHECKING
-    removeErrorsAndUpdateState(e, 'input-line-item', 'edit-input-text', 'error')
+  }
+})
+
+editFormContainer.addEventListener('change', (e) => {
+  console.log('IN EDITING CHANGE')
+  if (UIState.isEditing === true) {
+    removeErrorsAndUpdateState(e, 'edit-line-item-item', 'edit-input-text', 'error')
+  }
+})
+editFormContainer.addEventListener('keyup', (e) => {
+  console.log('IN EDITING KEYUP')
+  if (UIState.isEditing === true) {
+    removeErrorsAndUpdateState(e, 'edit-line-item-item', 'edit-input-text', 'error')
   }
 })
 
