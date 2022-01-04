@@ -454,14 +454,24 @@ select .edit-input-text {
 }
 
 .site-content {
-  /* width: 90%; */
   margin: 0 auto;
   max-width: 1000px;
   position: relative;
-  padding: 1.5rem;
+  padding: 1rem;
   transition: all var(--transition);
 }
 
+
+@media(max-width: 350px) { 
+  .site-content {
+    padding: 1rem;
+  }
+}
+@media(min-width: 370px) { 
+  .site-content {
+    padding: 1.5rem;
+  }
+}
 
 /* #d79b563d */
 @media(min-width: 45em) { 
