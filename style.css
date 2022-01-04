@@ -356,7 +356,8 @@ font: inherit
 
 .form-group,
 .label-wrap,
-.input-text {
+.input-text,
+.edit-input-text {
   width: 100%;
 }
 
@@ -408,7 +409,8 @@ font: inherit
 
 }
 
-.input-text {
+.input-text,
+.edit-input-text {
   background-color: var(--form-input);
   border:none;
   border-radius: 5px;
@@ -421,11 +423,13 @@ font: inherit
   transition: all var(--transition);
 }
 
-.input-text:focus {
+.input-text:focus,
+.edit-input-text:focus {
   background-color: var(--form-input);
   box-shadow: 5px 5px 10px rgba(255, 255, 255, 0.103);
 }
-.input-text.error {
+.input-text.error,
+.edit-input-text.error {
   background-color: var(--form-input);
   border: 1px solid var(--clr-red);
   box-shadow: 5px 5px 10px rgba(255, 255, 255, 0.103);
@@ -436,10 +440,10 @@ font: inherit
 select .input-text {
   padding-right: 20px;
 }
+select .edit-input-text {
+  padding-right: 20px;
+}
 /* WORK ON OPTIONS LATER */
-
-
-
 
 /* END FORMS */
 
@@ -645,22 +649,25 @@ select .input-text {
   width: 100%;
   z-index: -100;
   visibility: hidden;
-  opacity: 1;
+  display: none;
+  opacity: 0;
   transition: all var(--transition);
   transform: translateY(-400px) scale(0);
 }
 
 #edit-form-container.show {
+  display: block;
   z-index: 200;
   visibility: visible;
   opacity: 1;
   transform: translateY(75px)  scale(1);
 }
 #edit-form-container.hide {
-  z-index: 200;
-  visibility: visible;
-  opacity: 1;
-  transform: translateY(75px)  scale(1);
+  display: none;
+  z-index: -100;
+  visibility: hidden;
+  opacity: 0;
+  transform: translateY(75px)  scale(0);
 }
 
 
