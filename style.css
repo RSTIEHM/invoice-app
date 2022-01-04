@@ -793,7 +793,7 @@ select .edit-input-text {
   display: flex;
   justify-content: end;
   align-items: end;
-  gap: 0px;
+  gap: 10px;
 }
 
 @media(min-width: 445px) {
@@ -816,13 +816,24 @@ select .edit-input-text {
   cursor: pointer;
   font-size: 12px;
   font-weight: bold;
-
 }
 
-.btn-discard {
+.form-btn:hover {
+  cursor: pointer;
+  transition: all var(--transition);
+  opacity: 0.8;
+}
+
+.btn-discard ,
+.edit-btn-cancel {
   background-color: var(--form-input);
   color:var(--clr-main);
   padding: 1rem 1.5rem;
+}
+
+.edit-btn-cancel  {
+  background-color: rgb(58, 58, 58);
+  color:var(--clr-main);
 }
 
 .btn-draft {
@@ -831,11 +842,13 @@ select .edit-input-text {
   color:#fff;
 }
 
-.btn-send {
-  background-color: rgb(112, 49, 228);
+.btn-send,
+.edit-btn-update {
   background-color: var(--clr-purple);
   color:#fff;
 }
+
+
 
 @media(min-width: 40em) {
   .full-length {
