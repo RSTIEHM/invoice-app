@@ -65,11 +65,11 @@
 
 
   <!-- FORM -->
-  <section id="form-container" class="new-invoice hide" data-type="new-invoice">
+  <section id="form-container" class="new-invoice hide invoice-form" data-type="new-invoice">
     <div class="form-wrapper">
       <div class="form-content">
 
-        <form action="#" class="form new-form" method="POST">
+        <form action="index.html" class="form new-form" method="POST">
           <div class="form-padding-wrapper">
 
 
@@ -196,43 +196,46 @@
                 placeholder="Project Description">
             </div>
             <h2 class="form-group new-form-item-desc">Item List</h2>
+            <!-- MAYBE CONTAINER HERE -->
 
             <!-- START NEW ITEM -->
-            <div class="form-col-5-mod">
-              <div class="form-group">
-                <div class="label-wrap">
-                  <label class="input-label" for="project-description">Item Name </label>
-                  <span class="input-label-msg">can't be empty</span>
+            <div class="line-items-wrapper">
+              <div class="form-col-5-mod">
+                <div class="form-group">
+                  <div class="label-wrap">
+                    <label class="input-label" for="project-description">Item Name </label>
+                    <span class="input-label-msg">can't be empty</span>
+                  </div>
+                  <input class="input-text line-item-item line-item-name" type="text" name="line-item-name"
+                    placeholder="Add Item Name">
                 </div>
-                <input class="input-text line-item-item line-item-name" type="text" name="line-item-name"
-                  placeholder="Add Item Name">
-              </div>
-              <div class="form-group">
-                <div class="label-wrap">
-                  <label class="input-label" for="project-description">Qty. </label>
+                <div class="form-group">
+                  <div class="label-wrap">
+                    <label class="input-label" for="project-description">Qty. </label>
+                  </div>
+                  <input value="1" class="input-text line-item-item line-item-qty" type="number" name="line-item-qty"
+                    placeholder="1">
                 </div>
-                <input value="1" class="input-text line-item-item line-item-qty" type="number" name="line-item-qty"
-                  placeholder="1">
-              </div>
-              <div class="form-group">
-                <div class="label-wrap">
-                  <label class="input-label" for="project-description">Price </label>
-                  <span class="input-label-msg">can't be empty</span>
+                <div class="form-group">
+                  <div class="label-wrap">
+                    <label class="input-label" for="project-description">Price </label>
+                    <span class="input-label-msg">can't be empty</span>
+                  </div>
+                  <input class="input-text line-item-item line-item-price" type="text" name="line-item-price"
+                    placeholder="Add Price">
                 </div>
-                <input class="input-text line-item-item line-item-price" type="text" name="line-item-price"
-                  placeholder="Add Price">
-              </div>
-              <div class="form-group">
-                <div class="label-wrap">
-                  <label class="input-label" for="project-description">Line Total </label>
-                  <span class="input-label-msg">can't be empty</span>
+                <div class="form-group">
+                  <div class="label-wrap">
+                    <label class="input-label" for="project-description">Line Total </label>
+                    <span class="input-label-msg">can't be empty</span>
+                  </div>
+                  <p class="line-item-total">$0.00</p>
                 </div>
-                <p class="line-item-total">$0.00</p>
-              </div>
-              <div class="form-group form-group-trash">
-                <img id="trash-constant" class="line-item-delete"
-                  src="https://res.cloudinary.com/rjsmedia/image/upload/v1641118944/invoicer/icon-delete_pvdfsa.svg"
-                  alt="">
+                <div class="form-group form-group-trash">
+                  <img id="trash-constant" class="line-item-delete"
+                    src="https://res.cloudinary.com/rjsmedia/image/upload/v1641118944/invoicer/icon-delete_pvdfsa.svg"
+                    alt="">
+                </div>
               </div>
             </div>
             <!-- END NEW ITEM -->
@@ -263,7 +266,7 @@
     </div>
   </section>
 
-  <section id="edit-form-container" class="new-invoice hide" data-type="new-invoice">
+  <section id="edit-form-container" class="new-invoice hide invoice-form" data-type="new-invoice">
     <div class="form-wrapper">
       <div class="form-content">
 
@@ -347,8 +350,8 @@
                   <label class="input-label" for="client-city">Client City </label>
                   <span class="input-label-msg">can't be empty</span>
                 </div>
-                <input id="edit-client-city" type="text" class="edit-input-text edit-client-city" name="clientAddress-city"
-                  placeholder="Client City">
+                <input id="edit-client-city" type="text" class="edit-input-text edit-client-city"
+                  name="clientAddress-city" placeholder="Client City">
               </div>
               <div class="form-group">
                 <div class="label-wrap">
@@ -441,32 +444,28 @@
             <!-- END NEW ITEM -->
 
             <div class="form-group">
-              <button class="btn btn-4-dark btn-full add-item">+ Add New Item</button>
+              <button class="btn btn-4-dark btn-full edit-add-item">+ Add New Item</button>
             </div>
 
           </div>
           <div class="form-group">
             <div class="new-form-button-container-2">
-                <button class="form-btn edit-btn-cancel" id="data-cancel" data-action="data-cancel">Cancel</button>
-                <button class="form-btn edit-btn-update" id="data-update" data-action="data-update">Save
-                  Changes</button>
-              </div>
+              <button class="form-btn edit-btn-cancel" id="data-cancel" data-action="data-cancel">Cancel</button>
+              <button class="form-btn edit-btn-update" id="data-update" data-action="data-update">Save
+                Changes</button>
             </div>
-            <!-- <div class="new-form-button-container-2">
+          </div>
+          <!-- <div class="new-form-button-container-2">
                   <button class="form-btn btn-draft edit-cancel" id="data-cancel-edit"
                     data-action="data-cancel-edit">Cancel</button>
                   <button class="form-btn btn-send edit-save" id="data-save-edit" data-action="data-save-edit">Save
                     Changes</button>
                 </div> -->
-          </div>
-        </form>
       </div>
+      </form>
+    </div>
     </div>
   </section>
-
-
-
-
 
   <script src="app.js"></script>
 </body>
