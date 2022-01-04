@@ -100,6 +100,7 @@ const editInputText = _qsAll('.edit-input-text')
 const addItem = _qs('.add-item')
 const spinner = _qs('.spinner')
 const saveBtn = _qs('.btn-send');
+const editBtnUpdate = _qs('.edit-btn-update');
 let deleteModalContainer = _qs('.delete-modal-container');
 let lineItemsTableRow = _qs('.line-items-table-row')
 let inputLabelMsg = _qsAll('.input-label-msg');
@@ -113,7 +114,7 @@ let UIState = {
   currentInvoice: {}
 }
 
-
+// HTML ===================================
 // NEW BUTTON HEADER BAR ==================
 const invoiceHeaderHTML = () => {
   let div = document.createElement('div');
@@ -748,7 +749,17 @@ saveBtn.addEventListener('click', (e) => {
   }
 })
 
-
+editBtnUpdate.addEventListener('click', (e) => {
+  e.preventDefault()
+  console.log(UIState.currentInvoice, 'IN EDIT')
+  const errors = checkForEmpty(editInputText)
+  if (errors.length > 0) {
+    toElTopo()
+    console.log('ERRORS')
+  } else {
+    console.log('NO ERRORS')
+  }
+})
 
 
 siteContent.addEventListener('click', (e) => {
@@ -799,7 +810,10 @@ siteContent.addEventListener('click', (e) => {
   if (e.target.id === 'item-edit') {
     UIState.isEditing = true
     getEditFormHTML()
+    console.log(editBtnUpdate)
   }
+
+
 })
 
 
@@ -869,6 +883,8 @@ document.body.addEventListener('click', (e) => {
     deleteInvoice()
     updateLocalState()
   }
+
+
 })
 
 
