@@ -325,6 +325,12 @@ const getSingleInvoiceHTML = (invoice) => {
 }
 
 const createSingleListItemHTML = () => {
+  let itemClass;
+  if(UIState.isEditing) {
+    itemClass = 'edit-line-item-item'
+  } else {
+    itemClass = 'line-item-item'
+  }
   let html = `
 
       <div class="form-group">
@@ -332,21 +338,21 @@ const createSingleListItemHTML = () => {
           <label class="input-label" for="project-description">Item Name </label>
           <span class="input-label-msg">can't be empty</span>
         </div>
-        <input class="input-text line-item-item line-item-name" type="text" name="line-item-name"
+        <input class="input-text ${itemClass} line-item-name" type="text" name="line-item-name"
           placeholder="Add Item Name">
       </div>
       <div class="form-group">
         <div class="label-wrap">
           <label class="input-label" for="project-description">Qty. </label>
         </div>
-        <input value="1" class="input-text line-item-item line-item-qty" type="number" name="line-item-qty" placeholder="1">
+        <input value="1" class="input-text ${itemClass} line-item-qty" type="number" name="line-item-qty" placeholder="1">
       </div>
       <div class="form-group">
         <div class="label-wrap">
           <label class="input-label" for="project-description">Price </label>
           <span class="input-label-msg">can't be empty</span>
         </div>
-        <input class="input-text line-item-item line-item-price" type="text" name="line-item-price"
+        <input class="input-text  ${itemClass} line-item-price" type="text" name="line-item-price"
           placeholder="Add Price">
       </div>
       <div class="form-group">
@@ -373,7 +379,7 @@ const createSingleListItemHTML = () => {
 // =============================NEW INVOICE FORM ==============================
 // NEEDS TO BE RESET AFTER SUBMIT REVISIT ===================
 let newInvoice = {
-  id: generateID(),
+  id: null,
   createdAt: null,
   paymentDue: null,
   description: null,
@@ -499,10 +505,22 @@ const updateNewInvoiceState = (obj, input) => {
   let keys = input.name.split('-')
   let lastArrElem = keys[keys.length - 1]
   if (keys.length === 3 && (lastArrElem === 'name' || lastArrElem === 'qty' || lastArrElem === 'price')) {
+    // updateLineItemState(obj, keys, input, parentID)
   } else {
     updateInputItemState(obj, keys, input)
   }
+}
 
+const updateEditInvoiceState = (obj, input) => {
+  let keys = input.name.split('-')
+
+  let lastArrElem = keys[keys.length - 1]
+  if (keys.length === 3 && (lastArrElem === 'name' || lastArrElem === 'qty' || lastArrElem === 'price')) {
+
+    console.log(keys, lastArrElem)
+  } else {
+    updateInputItemState(obj, keys, input)
+  }
 }
 
 const updateInputItemState = (obj, keys, input) => {
@@ -513,23 +531,24 @@ const updateInputItemState = (obj, keys, input) => {
   }
 }
 
+
+
 const showListItemInput = (e) => {
-  console.log(UIState.isEditing)
   e.preventDefault()
   const parent = e.target.parentElement.previousElementSibling;
   let newLineItem = createSingleListItemHTML();
+  console.log('creating', newLineItem)
   let edit
   if (UIState.isEditing) {
     edit = 'edit-'
   } else {
     edit = ''
   }
-
   parent.insertAdjacentElement('afterend', newLineItem)
   let allLineItems = _qsAll('.line-item-delete')
   allLineItems.forEach(item => {
     item.addEventListener('click', (e) => {
-      if (e.target.id !== `${edit}trash-constant`) {
+      if(e.target.id !== edit + "trash-constant") {
         e.target.parentElement.parentElement.remove();
       }
     })
@@ -543,7 +562,14 @@ const removeErrorsAndUpdateState = (e, cls1, cls2, cls3) => {
     if (input.classList.contains(cls3) && input.value !== '') {
       removeInputErrorClass(input, cls3)
     }
-    updateNewInvoiceState(newInvoice, input)
+    if(UIState.isEditing) {
+      console.log('IN REMOVE ERRORS EDITING')
+      updateEditInvoiceState(newInvoice, input)
+    } else {
+      console.log('IN REMOVE ERRORS NEW INVOICE')
+      updateNewInvoiceState(newInvoice, input)
+    }
+
   }
 }
 
@@ -644,7 +670,13 @@ const getLineItemsAndAddToObj = () => {
   let tempObj = {}
   let tempArr = [];
   // CONDITONAL CHECK FOR EDITING
-  let lineItems = _qsAll('.line-item-item');
+  let lineItems;
+  if(UIState.isEditing) {
+    lineItems = _qsAll('.edit-line-item-item');
+  } else {
+   lineItems = _qsAll('.line-item-item');
+  }
+
   // CONDITONAL CHECK FOR EDITING
   let counter = 0;
   lineItems.forEach((item, i) => {
@@ -732,13 +764,12 @@ const sumLineItems = () => {
 }
 
 const setInvoiceToAppState = () => {
-  console.log(newInvoice.status)
   getLineItemsAndAddToObj()
   sumLineItems()
   let createdDate = createDate()
   newInvoice.createdAt = createdDate
+  newInvoice.id = generateID()
   appState.unshift(newInvoice)
-  console.log(appState)
   localStorage.setItem('invoice-data', JSON.stringify(appState))
   let insertInvoiceToPage = getNewInvoiceHTML(newInvoice);
   let invoiceHeader = document.querySelector('#invoice-header');
@@ -787,18 +818,28 @@ draftBtn.addEventListener('click', (e) => {
   }
 })
 
-
+// EDIT SAVE=========================================
 editBtnUpdate.addEventListener('click', (e) => {
   e.preventDefault()
-  let temp = _qsAll('.edit-input-text')
   const errors = checkForEmpty(editInputText)
   if (errors.length > 0) {
     toElTopo()
     console.log('ERRORS')
   } else {
-    console.log(UIState.currentInvoice)
-    console.log(newInvoice)
-    console.log('NO ERRORS')
+    editInputText.forEach(item => {
+      updateEditInvoiceState(newInvoice, item)
+    })
+    getLineItemsAndAddToObj()
+    let newState = appState.map((invoice) => {
+      if(invoice.id === newInvoice.id) {
+        return newInvoice
+      } else {
+        return invoice
+      }
+    })
+    newInvoice.createdAt = UIState.currentInvoice.createdAt
+    console.log(newState, 'NEW STATE')
+
   }
 })
 
@@ -857,6 +898,7 @@ siteContent.addEventListener('click', (e) => {
 
   if (e.target.id === 'item-edit') {
     UIState.isEditing = true
+    newInvoice.id = UIState.currentInvoice.id
     getEditFormHTML()
   }
 
