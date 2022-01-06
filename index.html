@@ -1,433 +1,1750 @@
-<!DOCTYPE html>
-<html lang="en">
+:root {
+  /* colors */
+  --clr-purple: #7c5dfa;
+  --clr-purple-light: #9277ff;
+  --clr-purple-dark: #252945;
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="icon" type="image/png" sizes="32x32"
-    href="https://res.cloudinary.com/rjsmedia/image/upload/v1641118944/invoicer/favicon-32x32_iwyqdu.png">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Spartan:wght@500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css">
-  <title>Invoice app</title>
-</head>
+  --clr-medsky-blue: #888eb0;
+  --clr-darksky-blue: #7e88c3;
+  --clr-darkblue: #0c0e16;
 
-<body class="">
-  <div class="spinner">
-    <div class="spinner-container">
-      <img src="https://res.cloudinary.com/rjsmedia/image/upload/v1641118947/invoicer/spinner_zwwzra.gif" alt="">
-    </div>
-  </div>
-  <div class="site-wrapper">
+ 
+  
 
-    <header id="header">
-      <div class="header-logo-container">
-        <img src="https://res.cloudinary.com/rjsmedia/image/upload/v1641118946/invoicer/logo_d5nqrk.svg" alt=""
-          class="header-logo">
-      </div>
-      <div class="header-sun-icon-container">
-        <img src="https://res.cloudinary.com/rjsmedia/image/upload/v1641118946/invoicer/icon-moon_hnybdb.svg" alt=""
-          class="header-sun-icon">
-      </div>
-      <div class="header-avatar-container">
-        <img src="https://res.cloudinary.com/rjsmedia/image/upload/v1641118946/invoicer/image-avatar_fdawr9.jpg"
-          class="header-avatar" alt="">
-      </div>
-    </header>
+  --clr-red: #ec5757;
+  --clr-salmon: #ff9797;
+  --clr-white: #f3f0f0;
+  --clr-black: #141625;
+  --clr-test:#ffffff;
+  --clr-test2:#ffffff;
+  
+  /* font-sizes */
+  --fs-900: 2.2rem;
+  --fs-800: 1.3rem;
+  --fs-700: 1rem;
+  --fs-600: .8rem;
+  --fs-500: 1.75rem;
+  --fs-400: 0.9375rem;
+  --fs-300: 1rem;
+  --fs-200: 0.875rem;
+
+  /* font-families */
+  --font-family: 'Spartan', sans-serif;
+  --transition: .3s ease-in-out;
+}
 
 
+@media(min-width: 35em) {
+/* :root {
+  --fs-800: 5rem;
+  --fs-700: 2.5rem;
+  --fs-600: 1.5rem;
+  --fs-400: 1rem;
+} */
+}
+
+@media(min-width: 45em) {
+/* :root {
+  --fs-800: 6.25rem;
+  --fs-700: 3.5rem;
+  --fs-600: 2rem;
+  --fs-400: 1.125rem;
+} */
+}
+
+*, 
+*::before,
+*::after {
+box-sizing: border-box;
+} 
+
+body,
+h1,
+h2,
+h3,
+h4,
+h5,
+p,
+figure,
+picture {
+margin: 0;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p {
+  font-weight: 400;
+}
+
+body {
+  --clr-purple-med-dark: #1e2139;
+  --clr-main: #f3f0f0;
+  --clr-main-2: #dfe3fa;
+  --invoice-card-bg: #262946;
+  --paid: rgba(0, 255, 149, 0.089);
+  --pending: rgba(219, 173, 120, 0.13);
+  --draft-bg: rgba(161, 161, 159, 0.171);
+  --draft-text: #fff;
+  --invoice-card-bg2: #1f2236;
+  --form-bg:rgb(19, 19, 31);
+  --form-input: #1e2139;
+  --summary-items-bg: #313558;
+  background-color: var(--clr-purple-med-dark);
+  font-family: var(--font-family);
+  color: hsl( var(--clr-white) );
+  line-height: 1.5;
+  min-height: 100vh;
+  display: grid;
+  grid-template-rows: min-content 1fr;
+}
+
+body.light {
+  /* ALL TOGGLE WORK HERE LAST */
+  --clr-purple-med-dark: #f3f3f3;
+  --clr-main: #1f1e1e;
+  --clr-main-2: #1d1d1d;
+  --invoice-card-bg: #ffffff;
+  --summary-items-bg: #f6f6f8d8;
+  --draft-bg: rgba(233, 233, 230, 0.836);
+  --draft-text: rgb(253, 253, 253);
+  --invoice-card-bg2: #edeef5;
+  --form-bg:#ffffff;
+  --form-input: #c1c6ec44;
+}
+
+#redirect-home {
+  color: var(--clr-main-2)
+}
+
+img,
+picture {
+max-width: 100%;
+display: block;
+}
+
+input,
+button,
+textarea,
+select {
+font: inherit
+}
+
+@media (prefers-reduced-motion: reduce) {  
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+.heading-1 {
+  font-size: var(--fs-900);
+  font-weight: bold;
+  letter-spacing: -1px;
+  line-height: 1.2;
+}
+.heading-2{
+  font-size: var(--fs-800);
+  /* font-size: 20px; */
+  font-weight: bold;
+  letter-spacing: -0.63px;
+  line-height: 1.2;
+}
+.heading-3{
+  font-size: var(--fs-700);
+  font-weight: bold;
+  letter-spacing: -0.8px;
+  line-height: 1.3;
+}
+
+.heading-4{
+  font-size: var(--fs-600);
+  font-weight: bold;
+  letter-spacing: -0.25px;
+  line-height: 1.5;
+}
 
 
 
 
-    <div class="site-content">
-      <!-- INJECT ME WITH CONTENT!!!! -->
-    </div>
 
-  </div>
+.purple {
+  background-color: var(--clr-purple);
+}
 
-  <section class="mobile-status-controls">
-    <div class="mobile-status-edit-bar__edit flex">
-      <button id="item-edit-mobile" class="btn btn-3-dark">Edit</button>
-      <button id="item-delete-mobile" class="btn btn-5-danger">Delete</button>
-      <button id="mark-paid-mobile" class="btn btn-2">Mark as Paid</button>
-    </div>
-  </section>
+.purple-light {
+  background-color: var(--clr-purple-light);
+}
+.purple-med {
+  background-color: var(--clr-purple-med-dark);
+}
+.purple-dark {
+  background-color: var(--clr-purple-dark);
+}
 
-  <div class="delete-modal-container hide">
-    <div class="delete-wrapper">
-      <div class="delete-content flex">
-        <h2>Confirm Deletion</h2>
-        <p>Are you sure you want to delete invoice <span class="delete-span-id">#XM914</span>? This action cannot be
-          undone.</p>
-        <div class="delete-btn-container flex">
-          <button data-action="cancel" class="btn btn-3-dark">Cancel</button>
-          <button data-action="delete" class="btn btn-5-danger">Delete</button>
-        </div>
-      </div>
-    </div>
-  </div>
+.light-bluesky {
+  background-color: var(--clr-lightsky-blue); 
+}
+.medsky-blue {
+  background-color: var(--clr-medsky-blue); 
+}
+.darksky-blue {
+  background-color: var(--clr-darksky-blue); 
+}
+.dark-blue {
+  background-color: var(--clr-darkblue); 
+}
+.red {
+  background-color: var(--clr-red);
+}
 
+.salmon {
+  background-color: var(--clr-salmon);
+}
+.white {
+  background-color: var(--clr-white);
+}
+.black {
+  background-color: var(--clr-black);
+}
 
-  <!-- FORM -->
-  <section id="form-container" class="new-invoice hide invoice-form" data-type="new-invoice">
-    <div class="form-wrapper">
-      <div class="form-content">
+/* BUTTONS */
+.btn {
+  display: grid;
+  border:none;
+  background-color: rgb(0,0,0,0);
+  place-items: center;
+  cursor: pointer;
+  border-radius: 30px;
+  line-height: 1.9;
+  font-size: var(--fs-600);
+}
 
-        <form action="index.html" class="form new-form" method="POST">
-          <div class="form-padding-wrapper">
+.btn-1,
+.btn-2,
+.btn-4-dark {
+  /* width: 150px;
+  height: 50px; */
+  display: flex;
+  justify-content: space-evenly;
+  background-color: var(--clr-purple);
+  color: var(--clr-white);
+  transition: all var(--transition);
+  align-items: center;
+  /* padding: 0 10px; */
+  padding: .5rem .7rem .5rem .5rem;
+  gap: 15px;
+}
+.btn-1 span {
+  text-align: center;
+  font-size: 20px;
+  background-color: var(--clr-white);
+  border-radius: 50%;
+  color: var(--clr-purple);
+  width: 32px;
+  height: 32px;
+}
 
+.btn-1:hover,
+.btn-2:hover {
+  background-color: var(--clr-purple-light);
+}
 
-            <div class="form-group form-group-title">
-              <h2 class="form-group-title-name">New Invoice <span class="form-group-title-span">All Fields Must Be
-                  Filled</span></h2>
-            </div>
+.btn-3-dark,
+.btn-5-danger {
+  width: 80px;
+  height: 50px;
+  display: flex;
+  justify-content: space-around;
+  background-color: var(--clr-purple-dark);
+  color: var(--clr-main);
 
-            <div class="form-group">
-              <p class="input-headers">Bill From</p>
-              <div class="label-wrap">
-                <label class="input-label" for="street">Street Address </label>
-                <span class="input-label-msg">can't be empty</span>
-              </div>
-              <input id="street" type="text" class="input-text" name="senderAddress-street"
-                placeholder="Street Address">
-            </div>
+  transition: all var(--transition);
+  align-items: center;
+  padding: 0 10px;
+}
 
-            <div class="auto-grid">
-              <div class="form-group">
-                <div class="label-wrap">
-                  <label class="input-label" for="city">City </label>
-                  <span class="input-label-msg">can't be empty</span>
-                </div>
-                <input id="city" type="text" class="input-text" name="senderAddress-city" placeholder="City">
-              </div>
-              <div class="form-group">
-                <div class="label-wrap">
-                  <label class="input-label" for="zipcode">Zipcode </label>
-                  <span class="input-label-msg">can't be empty</span>
-                </div>
-                <input id="zipcode" type="text" class="input-text" name="senderAddress-postCode" placeholder="Zipcode">
-              </div>
-              <div class="form-group full-length">
-                <div class="label-wrap">
-                  <label class="input-label" for="country">Country </label>
-                  <span class="input-label-msg">can't be empty</span>
-                </div>
-                <input id="country" type="text" class="input-text" name="senderAddress-country" placeholder="Country">
-              </div>
-            </div>
-
-            <div class="form-group">
-              <p class="input-headers">Bill To</p>
-              <div class="label-wrap">
-                <label class="input-label" for="clientName">Client Name </label>
-                <span class="input-label-msg">can't be empty</span>
-              </div>
-              <input id="client-name" type="text" class="input-text" name="clientName" placeholder="Client Name">
-            </div>
-
-            <div class="form-group">
-              <div class="label-wrap">
-                <label class="input-label" for="clientEmail">Client Email </label>
-                <span class="input-label-msg">can't be empty</span>
-              </div>
-              <input id="client-email" type="text" class="input-text" name="clientEmail" placeholder="Client Email">
-            </div>
-
-            <div class="form-group">
-              <div class="label-wrap">
-                <label class="input-label" for="client-address">Street Address </label>
-                <span class="input-label-msg">can't be empty</span>
-              </div>
-              <input id="client-address" type="text" class="input-text" name="clientAddress-street"
-                placeholder="Client Address">
-            </div>
-
-            <div class="auto-grid">
-              <div class="form-group">
-                <div class="label-wrap">
-                  <label class="input-label" for="client-city">Client City </label>
-                  <span class="input-label-msg">can't be empty</span>
-                </div>
-                <input id="client-city" type="text" class="input-text" name="clientAddress-city"
-                  placeholder="Client City">
-              </div>
-              <div class="form-group">
-                <div class="label-wrap">
-                  <label class="input-label" for="client-zipcode">Client Zipcode </label>
-                  <span class="input-label-msg">can't be empty</span>
-                </div>
-                <input id="client-zipcode" type="text" class="input-text" name="clientAddress-postCode"
-                  placeholder="Client Zipcode">
-              </div>
-              <div class="form-group full-length">
-                <div class="label-wrap">
-                  <label class="input-label" for="client-country">Client Country </label>
-                  <span class="input-label-msg">can't be empty</span>
-                </div>
-                <input id="client-country" type="text" class="input-text" name="clientAddress-country"
-                  placeholder="Client Country">
-              </div>
-            </div>
-
-            <div class="form-col-1">
-              <div class="form-group">
-                <div class="label-wrap">
-                  <label class="input-label" for="street-address">Invoice Date </label>
-                  <span class="input-label-msg">can't be empty</span>
-                </div>
-                <input type="date" class="input-text" name="paymentDue">
-              </div>
-              <div class="form-group">
-                <div class="label-wrap">
-                  <label class="input-label" for="street-address">Payment Terms </label>
-                  <span class="input-label-msg">can't be empty</span>
-                </div>
-                <select name="paymentTerms" id="select-input-1" class="input-text">
-                  <option value="1">Net 1 Day</option>
-                  <option value="7">Net 7 Days</option>
-                  <option value="14">Net 14 Days</option>
-                  <option value="30">Net 30 Days</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="form-group">
-              <div class="label-wrap">
-                <label class="input-label" for="project-description">Project Description </label>
-                <span class="input-label-msg">can't be empty</span>
-              </div>
-              <input id="project-description" type="text" class="input-text" name="description"
-                placeholder="Project Description">
-            </div>
-            <h2 class="form-group new-form-item-desc">Item List</h2>
-            <!-- MAYBE CONTAINER HERE -->
-
-            <!-- START NEW ITEM -->
-            <div class="line-items-wrapper">
-              <div class="form-col-5-mod">
-                <div class="form-group">
-                  <div class="label-wrap">
-                    <label class="input-label" for="project-description">Item Name </label>
-                    <span class="input-label-msg">can't be empty</span>
-                  </div>
-                  <input class="input-text line-item-item line-item-name" type="text" name="line-item-name"
-                    placeholder="Add Item Name">
-                </div>
-                <div class="form-group">
-                  <div class="label-wrap">
-                    <label class="input-label" for="project-description">Qty. </label>
-                  </div>
-                  <input value="1" class="input-text line-item-item line-item-qty" type="number" name="line-item-qty"
-                    placeholder="1">
-                </div>
-                <div class="form-group">
-                  <div class="label-wrap">
-                    <label class="input-label" for="project-description">Price </label>
-                    <span class="input-label-msg">can't be empty</span>
-                  </div>
-                  <input class="input-text line-item-item line-item-price" type="text" name="line-item-price"
-                    placeholder="Add Price">
-                </div>
-                <div class="form-group">
-                  <div class="label-wrap">
-                    <label class="input-label" for="project-description">Line Total </label>
-                    <span class="input-label-msg">can't be empty</span>
-                  </div>
-                  <p class="line-item-total">$0.00</p>
-                </div>
-                <div class="form-group form-group-trash">
-                  <img id="trash-constant" class="line-item-delete"
-                    src="https://res.cloudinary.com/rjsmedia/image/upload/v1641118944/invoicer/icon-delete_pvdfsa.svg"
-                    alt="">
-                </div>
-              </div>
-            </div>
-            <!-- END NEW ITEM -->
-
-            <div class="form-group">
-              <button class="btn btn-4-dark btn-full add-item">+ Add New Item</button>
-            </div>
-
-          </div>
-          <div class="form-group">
-            <div class="new-form-button-container">
-              <button class="form-btn btn-discard" id="data-discard" data-action="data-discard">Discard</button>
-              <div>
-                <button class="form-btn btn-draft" id="data-draft" data-action="data-draft">Save As Draft</button>
-                <button class="form-btn btn-send" id="data-save" data-action="data-save">Save &
-                  Send</button>
-              </div>
-            </div>
-
-          </div>
-        </form>
-      </div>
-    </div>
-  </section>
-
-  <section id="edit-form-container" class="new-invoice hide invoice-form" data-type="new-invoice">
-    <div class="form-wrapper">
-      <div class="form-content">
-
-        <form action="index.html" class="form new-form" method="POST">
-          <input class="edit-status" id="edit-status" type="hidden" name="status" value="">
-          <div class="form-padding-wrapper">
+.btn-3-dark {
+  color: var(--draft-text)!important;
+  background-color: rgba(77, 77, 77, 0.658);
+}
 
 
-            <div class="form-group form-group-title">
-              <h2 class="form-group-title-name ">Edit <span class="form-group-title-span">All Fields Must Be
-                  Filled</span></h2>
-            </div>
+.btn-3-dark:hover {
+  background-color: rgba(179, 179, 179, 0.473);
+  color: var(--clr-medsky-blue);
+}
 
-            <div class="form-group">
-              <p class="input-headers">Bill From</p>
-              <div class="label-wrap">
-                <label class="input-label" for="street">Street Address </label>
-                <span class="input-label-msg">can't be empty</span>
-              </div>
-              <input id="edit-street" type="text" class="edit-input-text edit-street" name="senderAddress-street"
-                placeholder="Street Address">
-            </div>
+.btn-4-dark {
+  background-color: var(--form-input);
+  color:var(--clr-main);
+  transition: all var(--transition);
+}
 
-            <div class="auto-grid">
-              <div class="form-group">
-                <div class="label-wrap">
-                  <label class="input-label" for="city">City </label>
-                  <span class="input-label-msg">can't be empty</span>
-                </div>
-                <input id="edit-city" type="text" class="edit-input-text edit-city" name="senderAddress-city"
-                  placeholder="City">
-              </div>
-              <div class="form-group">
-                <div class="label-wrap">
-                  <label class="input-label" for="zipcode">Zipcode </label>
-                  <span class="input-label-msg">can't be empty</span>
-                </div>
-                <input id="edit-zipcode" type="text" class="edit-input-text edit-zipcode" name="senderAddress-postCode"
-                  placeholder="Zipcode">
-              </div>
-              <div class="form-group full-length">
-                <div class="label-wrap">
-                  <label class="input-label" for="country">Country </label>
-                  <span class="input-label-msg">can't be empty</span>
-                </div>
-                <input id="edit-country" type="text" class="edit-input-text edit-country" name="senderAddress-country"
-                  placeholder="Country">
-              </div>
-            </div>
+.btn-4-dark:hover {
+   background-color: var(--clr-purple-dark);
+   /* color: var(--clr-purple); */
+   color:#fff;
+}
 
-            <div class="form-group">
-              <p class="input-headers">Bill To</p>
-              <div class="label-wrap">
-                <label class="input-label" for="clientName">Client Name </label>
-                <span class="input-label-msg">can't be empty</span>
-              </div>
-              <input id="edit-client-name" type="text" class="edit-input-text edit-client-name" name="clientName"
-                placeholder="Client Name">
-            </div>
+.btn-5-danger {
+  background-color: var(--clr-red);
+  color: var(--clr-white);
+  padding: 0 45px;
+}
 
-            <div class="form-group">
-              <div class="label-wrap">
-                <label class="input-label" for="clientEmail">Client Email </label>
-                <span class="input-label-msg">can't be empty</span>
-              </div>
-              <input id="edit-client-email" type="text" class="edit-input-text edit-client-email" name="clientEmail"
-                placeholder="Client Email">
-            </div>
+.btn-5-danger:hover {
+  background-color: var(--clr-salmon);
+}
 
-            <div class="form-group">
-              <div class="label-wrap">
-                <label class="input-label" for="client-address">Street Address </label>
-                <span class="input-label-msg">can't be empty</span>
-              </div>
-              <input id="edit-client-address" type="text" class="edit-input-text edit-client-address"
-                name="clientAddress-street" placeholder="Client Address">
-            </div>
+.save-btn {
+  display: grid;
+  grid-template-columns: 40% 1fr 1fr;
+}
 
-            <div class="auto-grid">
-              <div class="form-group">
-                <div class="label-wrap">
-                  <label class="input-label" for="client-city">Client City </label>
-                  <span class="input-label-msg">can't be empty</span>
-                </div>
-                <input id="edit-client-city" type="text" class="edit-input-text edit-client-city"
-                  name="clientAddress-city" placeholder="Client City">
-              </div>
-              <div class="form-group">
-                <div class="label-wrap">
-                  <label class="input-label" for="client-zipcode">Client Zipcode </label>
-                  <span class="input-label-msg">can't be empty</span>
-                </div>
-                <input id="edit-client-zipcode" type="text" class="edit-input-text edit-client-zipcode"
-                  name="clientAddress-postCode" placeholder="Client Zipcode">
-              </div>
-              <div class="form-group full-length">
-                <div class="label-wrap">
-                  <label class="input-label" for="client-country">Client Country </label>
-                  <span class="input-label-msg">can't be empty</span>
-                </div>
-                <input id="edit-client-country" type="text" class="edit-input-text edit-client-country"
-                  name="clientAddress-country" placeholder="Client Country">
-              </div>
-            </div>
+.btn-fade {
+  opacity: .5;
+}
+.btn-full {
+  width: 100%;
+}
 
-            <div class="form-col-1">
-              <div class="form-group">
-                <div class="label-wrap">
-                  <label class="input-label" for="street-address">Invoice Date </label>
-                  <span class="input-label-msg">can't be empty</span>
-                </div>
-                <input id="edit-payment-due" type="date" class="edit-input-text edit-payment-due" name="paymentDue">
-              </div>
-              <div class="form-group">
-                <div class="label-wrap">
-                  <label class="input-label" for="street-address">Payment Terms </label>
-                  <span class="input-label-msg">can't be empty</span>
-                </div>
-                <select name="paymentTerms" id="select-input-2" class="edit-input-text">
-                  <option value="1">Net 1 Day</option>
-                  <option value="7">Net 7 Days</option>
-                  <option value="14">Net 14 Days</option>
-                  <option value="30">Net 30 Days</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="form-group">
-              <div class="label-wrap">
-                <label class="input-label" for="project-description">Project Description </label>
-                <span class="input-label-msg">can't be empty</span>
-              </div>
-              <input id="edit-project-description" type="text" class="edit-input-text" name="description"
-                placeholder="Project Description">
-            </div>
-            <h2 class="form-group new-form-item-desc">Item List</h2>
-            <div class="edit-line-items-wrapper">
-              <!-- FILL ME UP BUTTERCUP -->
-            </div>
+.btn-light {
+  background-color: var(--clr-purple-dark);
+}
 
 
-            <div class="form-group">
-              <button class="btn btn-4-dark btn-full edit-add-item">+ Add New Item</button>
-            </div>
 
-          </div>
-          <div class="form-group">
-            <div class="new-form-button-container-2">
-              <button class="form-btn edit-btn-cancel" id="data-cancel" data-action="data-cancel">Cancel</button>
-              <button class="form-btn edit-btn-update" id="data-update" data-action="data-update">Save
-                Changes</button>
-            </div>
-          </div>
-      </div>
-      </form>
-    </div>
-    </div>
-  </section>
 
-  <script src="app.js"></script>
-</body>
 
-</html>
+.grid-right {
+  justify-self: end;
+}
+
+.p-30 {
+  padding: 0 30px;
+}
+
+.hide {
+  display: none;
+}
+
+.grid {
+  display: grid;
+}
+
+.flex {
+  display: flex;
+}
+
+.block {
+  display: block;
+}
+
+#no-items {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+}
+
+.no-items-msg img {
+  display: block;
+  text-align: center;
+  margin: 0 auto;
+}
+
+.no-items-msg {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+ text-align: center;
+ padding: 6rem 0 10rem 0;
+ color:var(--clr-main)
+}
+
+.no-items-msg p  {
+  font-weight: lighter;
+}
+
+.no-items-msg span {
+  font-weight: bold!important;
+}
+
+input[type="checkbox"] {
+  /* background-color: var(--clr-purple-med-dark)!important;
+  appearance: none;
+  background-color: #fff;
+  margin: 0;
+  font: inherit;
+  color: currentColor;
+  width: 1.15em;
+  height: 1.15em;
+  border: 0.15em solid var(--clr-purple);
+  border-radius: 0.15em;
+  transform: translateY(-0.075em); */
+}
+
+input[type="checkbox"]::before {
+  /* transform-origin: bottom left;
+  clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%); */
+}
+
+/* FORMS */
+
+.form-elements {
+  width: 70%;
+  margin: 0 auto;
+  background-color: var(--clr-purple-med-dark);
+  height: 500px;
+  padding-top: 20px;
+}
+
+.form-group,
+.label-wrap,
+.input-text,
+.edit-input-text {
+  width: 100%;
+}
+
+
+
+.form-group {
+  width: 100%;
+  margin: 0 auto 25px auto;
+}
+
+.input-headers {
+  color: var(--clr-purple);
+  font-size: 12px;
+  margin-bottom: 15px;
+}
+
+.label-wrap {
+  color: var(--clr-lightsky-blue);
+  font-weight: 400;
+  font-size: 11px;
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.label-wrap.error {
+  color: var(--clr-red)
+}
+
+.input-label {
+  color: var(--clr-main);
+}
+
+.input-label-msg {
+  opacity: 0;
+  transition: opacity var(--transition);
+  color:red;
+  margin-bottom: 0;
+  padding: 0;
+  line-height: .8;
+  display: none;
+  /* display: none; */
+}
+
+.input-label-msg.error {
+  opacity: 1;
+  /* display: block; */
+  color:red;
+
+}
+
+.input-text,
+.edit-input-text {
+  background-color: var(--form-input);
+  border:none;
+  border-radius: 5px;
+  color: var(--clr-main);
+  font-size: 13px;
+  outline: none;
+  padding: 10px 0;
+  padding-left: 10px;
+  border: 1px solid rgba(255, 255, 255, 0);
+  transition: all var(--transition);
+}
+
+.input-text:focus,
+.edit-input-text:focus {
+  background-color: var(--form-input);
+  border: 1px solid var(--clr-purple);
+  box-shadow: 5px 5px 10px rgba(255, 255, 255, 0.103);
+}
+.input-text.error,
+.edit-input-text.error {
+  background-color: var(--form-input);
+  border: 1px solid var(--clr-red);
+  box-shadow: 5px 5px 10px rgba(255, 255, 255, 0.103);
+}
+
+
+
+select .input-text {
+  padding-right: 20px;
+}
+select .edit-input-text {
+  padding-right: 20px;
+}
+/* WORK ON OPTIONS LATER */
+
+/* END FORMS */
+
+/* LAYOUT */
+.site-wrapper {
+  width: 100%;
+  position: relative;
+}
+
+.site-content {
+  margin: 0 auto;
+  max-width: 1000px;
+  position: relative;
+  padding: 1rem;
+  transition: all var(--transition);
+}
+
+
+@media(max-width: 350px) { 
+  .site-content {
+    padding: 1rem;
+  }
+}
+@media(min-width: 370px) { 
+  .site-content {
+    padding: 1.5rem;
+  }
+}
+
+/* #d79b563d */
+@media(min-width: 45em) { 
+  .site-content {
+    padding: 1.5rem 3rem;
+  }
+}
+
+
+.spinner {
+  position: absolute;
+  top:0; 
+  left:0;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  height: 100vh;
+  z-index: -100;
+  opacity: 0;
+  visibility: hidden;
+  background-color: rgba(0, 0, 0, 0.507);
+  display: grid;
+  place-items: center;
+  transition: all var(--transition);
+}
+
+.spinner.hide {
+  display: none;
+}
+
+.spinner.show {
+  display: block;
+  z-index: 3000;
+  visibility: visible;
+  opacity: 1;
+}
+
+.spinner-container {
+  width: 50%;
+  display: grid;
+  place-items: center;
+}
+.spinner-container img {
+  width: 30%;
+  text-align: center;
+}
+
+/* HEADER */
+#header {
+  width: 100%;
+  height: 75px;
+  /* background-color: var(--clr-purple-med-dark); */
+  background-color: #313558;
+  display: grid;
+  grid-template-columns: 80px repeat(9, 1fr)  80px 80px;
+}
+
+.header-logo-container {
+  width: 80px;
+  height: 100%;
+  background-color: var(--clr-purple);
+  display: grid;
+  place-items: center;
+  border-top-right-radius: 20px;
+  border-bottom-right-radius: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+.header-logo-container::after {
+  position: absolute;
+  content: '';
+  width: 80px;
+  height: 100%;
+  background-color: var(--clr-purple-light);
+  transform: translateY(50%);
+  z-index: 1;
+  border-top-left-radius: 20px;
+}
+
+.header-logo {
+  width: 30px;
+  height: 30px;
+  z-index: 2;
+  grid-column: 1 / 2;
+}
+
+.header-sun-icon-container {
+  grid-column: 11 / 11;
+  display: grid;
+  place-items: center;
+}
+.header-sun-icon-container img {
+  cursor: pointer;
+}
+
+.header-sun-icon {
+  width: 20px;
+  height: 20px;
+  place-self: center;
+}
+
+.header-avatar-container {
+  grid-column: 12 / 13;
+  border-left: 1px solid rgba(255, 255, 255, 0.253);
+  display: grid;
+  place-items: center;
+
+}
+.header-avatar {
+  border-radius: 100%;
+  width: 30px;
+  height: 30px;
+}
+
+
+
+
+/* NEW INVOICE FORM */
+.form-col-2 {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0px 20px;
+}
+.form-col-3 {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+.form-col-5 {
+  display: grid;
+  grid-template-columns: 30% 40px 20% 1fr 40px;
+  gap: 20px;
+  margin-bottom: 0;
+  margin-bottom: 30px;
+  /* display: none; */
+}
+.form-col-5-mod {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  margin-bottom: 30px;
+  gap:  0 20px;
+}
+
+
+
+@media(min-width: 500px) {
+  .form-col-5-mod {
+    grid-template-columns: 30% 40px 20% 1fr 40px;
+  }
+}
+
+.double-width {
+  width: 210%;
+}
+.no-margin-bottom {
+  margin-bottom: 0;
+}
+
+#form-container,
+#edit-form-container {
+background-color: rgba(0, 0, 0, 0.63);
+}
+
+.form-wrapper {
+  max-width: 900px;
+}
+#form-container {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  z-index: -100;
+  visibility: hidden;
+  opacity: 1;
+  transition: all var(--transition);
+  transform: translateY(-400px) scale(0);
+
+}
+#form-container.show {
+  z-index: 100;
+  visibility: visible;
+  opacity: 1;
+  transform: translateY(75px)  scale(1);
+}
+
+#form-container.hide {
+  z-index: -100;
+  visibility: hidden;
+  opacity: 0;
+  transform: translateY(-400px) scale(0);
+  transition: all var(--transition);
+}
+
+#edit-form-container {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  z-index: -100;
+  visibility: hidden;
+  display: none;
+  opacity: 0;
+  transition: all var(--transition);
+  transform: translateY(-400px) scale(0);
+}
+
+#edit-form-container.show {
+  display: block;
+  z-index: 200;
+  visibility: visible;
+  opacity: 1;
+  transform: translateY(75px)  scale(1);
+}
+#edit-form-container.hide {
+  display: none;
+  z-index: -100;
+  visibility: hidden;
+  opacity: 0;
+  transform: translateY(75px)  scale(0);
+}
+
+
+.form-wrapper {
+}
+
+.form-content {
+  width: 100%;
+  background-color: var(--form-bg);
+  color: #fff;
+ min-height: 100vh;
+ padding-top: 2rem;
+}
+
+.form {
+  padding: 0 0;
+  position: relative;
+
+}
+
+.form-padding-wrapper {
+  padding: 0 2rem;
+}
+.form-group-title {
+  margin-bottom: 2rem;
+  color: var(--clr-main);
+}
+.form-group-title-name {
+
+}
+
+.form-group-title-span {
+  opacity: 0;
+  color: red;
+  font-size: 12px;
+}
+
+#line-item-qty {
+  padding-left: 0;
+  text-align: center;
+}
+.line-items-table-row {
+  display: none;
+}
+
+.line-items-table-row.show {
+  display: grid;
+}
+
+.line-item-totals {
+  display: grid;
+  place-items: center;
+  justify-items: start;
+  height: 100%
+}
+
+.form-group-trash {
+  display: grid;
+  place-items: start;
+}
+
+.line-item-total {
+  display: grid;
+  place-self: center;
+  transform: translateY(10px);
+}
+
+
+
+.line-item-delete {
+  cursor: pointer;
+  width: 17px;
+  height: 20px;
+  transform: translateY(20px);
+  color:red
+}
+
+@media(min-width: 500px) {
+  .form-group-trash {
+    place-self: center;
+  }
+  .line-item-delete {
+    transform: translateY(10px);
+  }
+}
+
+.auto-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  grid-template-rows: 2, 1fr;
+  gap: 10px;
+}
+
+.full-length {
+  grid-column: 1 / 3;
+  grid-row: 2 / 3;
+  width: 100%;
+}
+
+.new-form-button-container {
+  /* background-color: var(--clr-purple-dark); */
+  padding: 1.5rem .1rem;
+  margin-top: 50px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0px;
+}
+
+.new-form-button-container-2 {
+  padding: 1.5rem 2rem;
+  margin-top: 50px;
+  display: flex;
+  justify-content: end;
+  align-items: end;
+  gap: 10px;
+}
+
+@media(min-width: 352px) {
+  .new-form-button-container {
+    padding: 1.5rem .1rem;
+  }
+}
+@media(min-width: 445px) {
+  .new-form-button-container {
+    padding: 1.5rem 2.2rem;
+  }
+}
+
+.new-form-item-desc {
+  color: var(--clr-main-2);
+  font-size: 20px;
+}
+
+.form-btn {
+  padding: 1rem 1rem;
+  border-radius: 50px;
+  background: none;
+  outline: none;
+  border: none;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.form-btn:hover {
+  cursor: pointer;
+  transition: all var(--transition);
+  opacity: 0.8;
+}
+
+.btn-discard ,
+.edit-btn-cancel {
+  background-color: var(--form-input);
+  color:var(--clr-main);
+  padding: 1rem 1.5rem;
+}
+
+.edit-btn-cancel  {
+  background-color: rgb(58, 58, 58);
+  color:var(--clr-main);
+}
+
+.btn-draft {
+  background-color: rgb(58, 58, 58);
+  color:var(--clr-main);
+  color:#fff;
+}
+
+.btn-send,
+.edit-btn-update {
+  background-color: var(--clr-purple);
+  color:#fff;
+}
+
+
+
+@media(min-width: 40em) {
+  .full-length {
+    grid-column: unset;
+    grid-row: unset;
+  
+  }
+}
+
+/* FORM BG background-color: rgba(27, 27, 27, 0.842); */
+/* input BG var(--clr-purple-dark) */
+ /* ADD NEW ITEM  var(--clr-purple-dark) */
+
+/* NEW INVOICE FORM */
+
+
+
+
+/* INVOICES HEADER */
+#invoice-header {
+  width: 100%;
+  color: var(--clr-white);
+  margin-bottom: 25px;
+  z-index: 1000;
+}
+
+.invoice-header-span {
+  display: none;
+}
+
+.invoice-header {
+
+}
+.new-invoice-message {
+  color: var(--clr-purple);
+  font-weight: bold;
+  text-align: center;
+}
+
+
+/* INVOICE HEADER MAIN */
+
+.invoice-header-wrapper {
+  display: grid;
+  grid-template-columns: 1fr .5fr .5fr;
+  align-items: center;
+}
+
+.invoice-header-container {
+
+}
+
+.invoice-header-title__title {
+  font-weight: bold;
+  font-size: var(--fs-800);
+  color: var(--clr-main);
+}
+
+.invoice-header-title__amt {
+  font-weight: 400;
+  font-size: 13px;
+  color: var(--clr-main-2);
+}
+#create-new-invoice {
+  text-align: left;
+}
+.invoice-header-filter-container {
+  position: relative;
+  justify-self: end;
+  margin-right: 10px;
+  width: 100%;
+  transform: translateX(30%);
+}
+
+.invoice-header-filter-container h3 {
+  font-weight: bold;
+  font-size: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  color: var(--clr-main);
+  width: 200px;
+}
+
+/* DROPDOWN */
+.dropdown-container {
+  position: absolute;
+  z-index: 1;
+  bottom: 0;
+  top:0;
+  transform: translate(-10rem, -2.2rem);
+  width: 70%;
+  font-weight: bold;
+  display: none;
+}
+
+.dropdown {
+  background-color: var(--summary-items-bg);
+  padding: .5rem 0rem .5rem 1rem;
+  text-align: left;
+  border-radius: 10px;
+}
+
+.dropdown-content {
+
+}
+
+.dropdown-filter-paid,
+.dropdown-filter-pending,
+.dropdown-filter-draft {
+  cursor: pointer;
+}
+
+.invoice-header-button-container {
+ justify-self: end;
+}
+
+
+/* ===========INVOICES========= */
+.invoices-wrapper {
+  /* padding: 0 40px; */
+  display: grid;
+  gap: 15px;
+}
+
+.no-invoices-container {
+  width: 60%;
+  margin: 0 auto;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  padding: 100px 0;
+  color: var(--clr-white);
+  display: none;
+  
+}
+
+.no-invoices-container h2 {
+  font-size: var(--fs-800);
+  margin-top: 70px;
+}
+.no-invoices-container p {
+  margin-top: 20px;
+  font-size: 13px;
+  font-weight: 100;
+  width: 60%;
+}
+
+.invoices-container {
+  display: block;
+}
+
+.single-invoice {
+  opacity: 1;
+  color: var(--clr-main);
+  background-color: var(--invoice-card-bg);
+  display: grid;
+  grid-template-areas: 
+  "row1col1 row1col2"
+  "row2col1 row2col2"
+  "row3col1 row2col2";
+  width: 100%;
+  padding: 1.5rem 1rem;
+  transition: all var(--transition);
+  border: 1px solid rgba(255, 255, 255, 0);
+  cursor: pointer;
+  box-shadow: 3px 3px 10px rgba(212, 211, 211, 0.082);
+  border-radius: 10px;
+  margin-bottom: 10px;
+  z-index: 0;
+}
+
+.single-invoice__id {
+  grid-area: row1col1;
+  margin-bottom: 20px;
+  color: var(--clr-main)
+}
+
+.single-invoice__date {
+  grid-area: row2col1;
+  margin-bottom: 5px;
+  color: var(--clr-main-2);
+}
+
+.single-invoice__amt {
+  grid-area: row3col1;
+}
+
+.single-invoice__vendor-name {
+  grid-area: row1col2;
+  justify-self: end;
+}
+
+.single-invoice__status {
+  grid-area: row2col2;
+  justify-self: end;
+}
+
+.single-invoice:hover {
+  opacity: .8;
+  box-shadow: 5px 5px 10px rgba(255, 255, 255, 0.103);
+  border: 1px solid var(--clr-purple);
+  z-index: 1;
+}
+
+.single-invoice__id {
+  font-size: var(--fs-600);
+}
+
+.single-invoice__id span {
+  color: var(--clr-medsky-blue);
+}
+
+.single-invoice__date,
+.single-invoice__vendor-name,
+.single-invoice__status--text {
+  font-weight: 400;
+  font-size: 13px;
+  color: var(--clr-main);
+}
+
+.single-invoice__amt {
+  font-weight: bold;
+  font-size: var(--fs-700);
+}
+
+
+.single-invoice__status::before {
+  content: "";
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  background-color: inherit;
+}
+
+.single-invoice__status {
+  font-size: var(--fs-600);
+  background-color: red;
+  width: 100px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  text-transform: capitalize;
+  position: relative;
+}
+
+
+.single-invoice__status.paid {
+  background-color: var(--paid); 
+  color: rgb(26, 194, 124); 
+  font-weight: bold;
+}
+.single-invoice__status.pending {
+  /* fix FOR TOGGLE */
+  background-color: var(--pending); 
+  color: rgb(255, 136, 0); 
+  font-weight: bold;
+}
+.single-invoice__status.draft {
+  background-color: var(--draft-bg); 
+  color: var(--clr-main);
+  font-weight: bold;
+}
+
+.single-invoice__status.paid::before {
+  content: "";
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background-color: rgb(26, 194, 124); 
+  transform: translate(-1.9rem, -2px);
+  display: grid;
+  place-items: center;
+  border-radius: 100%;
+}
+.single-invoice__status.pending::before {
+  content: "";
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background-color: rgb(255, 136, 0); 
+  transform: translate(-2.3rem, -2px);
+  display: grid;
+  place-items: center;
+  border-radius: 100%;
+}
+.single-invoice__status.draft::before {
+  content: "";
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background-color: rgb(92, 92, 92); 
+  transform: translate(-2.3rem, -2px);
+  display: grid;
+  place-items: center;
+  border-radius: 100%;
+}
+
+.single-invoice__arrow {
+  justify-self: start;
+  cursor: pointer;
+}
+
+@media(min-width: 35em) {
+  .single-invoice {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    /* justify-content: space-between;
+    align-items: center; */
+    padding: 1rem 1rem;
+
+    /* justify-items: start; */
+ 
+  }
+  .single-invoice__id {
+    margin-bottom: 0px;
+    grid-area: unset;
+    align-self: center;
+  }
+  
+  .single-invoice__date {
+    margin-bottom: 0px;
+    grid-area: unset;
+    align-self: center;
+    justify-self:start;
+  }
+  .single-invoice__amt {
+     justify-self:end;
+     align-self: center;
+     grid-area: unset;
+  }
+
+  .single-invoice__vendor-name {
+    justify-self:start;
+    align-self: center;
+    grid-area: unset;
+  }
+
+  .single-invoice__status {
+    grid-area: unset;
+    display: grid;
+    justify-self:end;
+    place-items: center;
+    border-radius: 10px;
+    text-transform: capitalize;
+    position: relative;
+}
+
+  .btn-1 {
+  /* padding: 0 10px; */
+  padding: .5rem 1rem .5rem 2rem;
+  text-align: center;
+  
+  }
+
+  .btn-1 span {
+    
+    transform: translateX(-1rem);
+    color: var(--clr-purple);
+    width: 32px;
+    height: 32px;
+  }
+}
+/* ===========END INVOICES========= */
+
+
+
+
+/* ======================INVOICE PAGE======================== */
+
+
+.view-single-container {
+  /* padding: 10px 30px; */
+}
+
+.view-single-wrapper {
+  padding-bottom: 3rem;
+  margin-bottom: 3rem;
+}
+
+@media (min-width: 38em) {
+  .view-single-wrapper {
+    padding-bottom: 0;
+    margin-bottom: 0;
+  }
+}
+
+.single-invoice-link {
+  padding: 20px 0 20px 10px;
+}
+
+.single-invoice-link h3 {
+  font-weight: bold;
+  font-size: 12px;
+  display: flex;
+  justify-content: start;
+  align-items: left;
+  gap: 5px;
+  color:var(--clr-white);
+  opacity: 1;
+  cursor: pointer;
+  transition: all .3s ease-in-out;
+}
+
+.single-invoice-link h3 span {
+  transform: translate(-6px, 3px);
+}
+
+.single-invoice-link h3:hover {
+  opacity: 0.8;
+}
+
+#item-edit,
+#item-delete,
+#mark-paid {
+  display: none;
+}
+
+/* #item-edit {
+  color: var(--draft-text)!important;
+} */
+
+.status-edit-bar {
+  justify-content: space-between;
+  background-color: var(--invoice-card-bg);
+  align-items: center;
+  padding: 16px 30px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+  box-shadow: 3px 3px 10px rgba(212, 211, 211, 0.082);
+}
+
+
+.status-edit-bar__status {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+}
+
+
+.status-edit-bar__edit {
+  gap:10px;
+  justify-self: center;
+  align-items: center;
+}
+
+#mark-paid {
+  /* padding: 0 45px; */
+  /* height: 100%; */
+  padding: 0;
+  padding: .7rem 1.5rem;
+}
+
+@media(min-width: 38em) {
+  .status-edit-bar__status {
+    justify-content: start;
+    width: 30%;
+  }
+  #item-edit,
+  #item-delete,
+  #mark-paid {
+  display: flex;
+}
+}
+
+
+
+/* DELETE */
+.invoice-summary-master-container {
+  background-color: var(--invoice-card-bg);
+  border-radius: 10px;
+  padding: 1.5rem 1rem;
+  display: grid;
+  box-shadow: 3px 3px 10px rgba(212, 211, 211, 0.082);
+}
+
+
+@media(min-width: 38em) {
+  .invoice-summary {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
+
+.invoice-summary__header {
+  color: var(--clr-white);
+  margin-bottom: 30px;
+}
+
+.invoice-summary__header .single-invoice__id {
+  font-size: var(--fs-700);
+}
+
+.invoice-summary__header .single-invoice__vendor-type {
+  font-weight: 400;
+  font-size: 13px;
+  color: var(--clr-lightsky-blue);
+}
+
+.invoice-summary__sender-address {
+  color: var(--clr-main-2);
+  font-size: 11px;
+  font-weight: normal;
+  text-align: left;
+  margin-bottom: 25px;
+}
+
+.invoice-summary__details {
+  color: var(--clr-lightsky-blue);
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+}
+
+@media(min-width: 38em) {
+  .invoice-summary__details {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.invoice-summary__deats {
+  color: var(--clr-main)!important;
+  font-weight: bold!important;
+}
+
+.invoice-summary__headers {
+  color: var(--clr-main-2)!important;
+}
+
+.single-invoice__invoice-date {
+  color: var(--clr-lightsky-blue);
+  font-size: 12px;
+  font-weight: normal;
+}
+
+.invoice-summary__dates p,
+.invoice-summary__bill--to p,
+.invoice-summary__sent--to p {
+  color: var(--clr-lightsky-blue);
+  font-size: 12px;
+  font-weight: normal;
+  text-align: left;
+  margin-bottom: 10px;
+}
+
+.invoice-summary__dates h2,
+.invoice-summary__bill--to h2,
+.invoice-summary__sent--to h2{
+  font-size: var(--fs-700);
+  margin-bottom: 25px;
+  font-weight: bold;
+  color: var(--clr-white);
+}
+
+.invoice-summary__dates {
+  justify-content: start;
+}
+
+.invoice-summary__bill--to {
+  display: flex;
+  flex-direction: column;
+}
+
+.invoice-summary__bill--to h3 {
+  color: var(--clr-lightsky-blue);
+  font-size: 11px;
+  font-weight: normal;
+  text-align: left;
+  transform: translateY(-7px);
+}
+.invoice-summary__sent--to {
+  width: 40%;
+}
+
+.invoice-summary__items {
+  background-color: var(--invoice-card-bg2);
+  color: var(--clr-main);
+  padding: 1rem;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  display: none;
+}
+
+/* DELETE */
+
+
+.mobile-summary {
+  display: block;
+  background-color: var(--summary-items-bg);
+  padding: 1.9rem 1.5rem;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+.desktop-summary {
+  display: none;  
+  width: 100%;
+  background-color: var(--summary-items-bg);
+  padding: 1.9rem 1.5rem;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+@media (min-width: 40em) {
+
+  .desktop-summary {
+    display: block;  
+  }
+
+  .mobile-summary {
+    display: none;
+  }
+}
+
+.invoice-total-amounts-container {
+  color: black;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.mobile-summary-name-price {
+  color: var(--clr-main);
+  font-weight: bold;
+  font-size: 14px;
+}
+.mobile-summary-qty-times {
+  color: var(--clr-main-2);
+  font-size: 13px;
+}
+
+.desktop-summary-header {
+  display: grid;
+  grid-template-columns: 3fr .5fr 1fr 1fr;  
+  color: var(--clr-main-2)!important;
+  font-weight: normal;
+  font-size: 12px;
+  margin-bottom: 30px;
+}
+
+.mobile-summary-container {
+  display: flex;
+  flex-direction: column;
+  gap:20px;
+}
+.desktop-summary-items-container {
+  display: flex;
+  flex-direction: column;
+  gap:20px;
+}
+
+.desktop-summary-items {
+  display: grid;
+  grid-template-columns: 3fr .5fr 1fr 1fr;
+  color: var(--clr-main);
+
+}
+.desktop-summary-items p {
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.summary-price {
+  justify-self: end;
+}
+
+
+
+
+/* .invoice-summary__items--header {
+  grid-template-columns: 60% repeat(3, 1fr);
+  grid-template-rows: auto;
+  color: var(--clr-lightsky-blue);
+  font-size: 12px;
+  font-weight: normal;
+  text-align: left;
+  display: grid;
+} */
+
+/* .item_hide-me {
+  display: none;
+} */
+
+/* .invoice-summary__items--header p:nth-child(2) {
+  transform: translateX(-10px);
+}
+
+.invoice-summary__items--item {
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: auto;
+  color: var(--clr-main);
+  font-size: 14px;
+  font-weight: bold;
+  text-align: left;
+  place-items: center;
+} */
+
+
+.job-type {
+  justify-self: start;
+}
+
+.single-invoice-total {
+  justify-self: end;
+}
+
+.invoice-summary__totals-bar {
+  color: var(--clr-white);
+  width: 100%;
+  background-color: rgba(18, 18, 19, 0.76);
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 30px 20px 30px;
+  border-bottom-right-radius: 10px;
+  border-bottom-left-radius: 10px;
+}
+
+.invoice-summary__totals-bar p {
+  color: var(--clr-white);
+  font-size: 12px;
+  font-weight: normal;
+}
+
+.delete-modal-container {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(24, 23, 23, 0.733);
+  z-index: -5;
+  opacity: 0;
+  display: grid;
+  place-items: center;
+  visibility: hidden;
+  transform: scale(.9);
+  transition: all var(--transition);
+}
+
+.delete-modal-container.hide {
+  transform: scale(0);
+  display: none;
+}
+
+.delete-modal-container.show {
+  display: grid;
+  z-index: 2; 
+  visibility: visible;
+  opacity: 1;
+  transform: scale(1);
+}
+
+.delete-wrapper {
+  max-width: 100%;
+  background-color: var(--clr-purple-med-dark);
+  color: #fff;
+  border-radius: 10px;
+  /* transform: translateY(-7rem); */
+}
+
+.delete-content {
+  flex-direction: column;
+  align-content: space-evenly;
+  padding: 3rem 3rem;
+ 
+}
+
+.delete-content p {
+  font-size: 13px;
+  font-weight: normal;
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+
+.delete-btn-container {
+  align-self: end;
+  gap: 10px
+}
+
+.delete-btn-container .btn {
+  height: 45px;
+}
+
+
+
+.mobile-status-controls {
+  width: 100%;
+  background-color: rgb(248, 246, 246);
+  background-color: var(--invoice-card-bg);
+  position: fixed;
+  padding: 1rem 0;
+  bottom: 0;
+  left: 0;
+  visibility: hidden;
+  opacity: 0;
+}
+.mobile-status-controls.show {
+  visibility: visible;
+  opacity: 1;
+  z-index: 5000;
+}
+
+.mobile-status-edit-bar__edit  {
+  justify-content: center;
+  gap: 10px;
+}
+
+
+@media (min-width: 38em) {
+  /* .mobile-status-controls {
+    display: none!important;
+  } */
+}
+
+/* ======================INVOICE PAGE======================== */
+
+
+
+
+
+
+
+
+
+
+
