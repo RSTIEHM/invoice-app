@@ -347,8 +347,8 @@ const getSingleInvoiceHTML = (invoice) => {
             <div class="mobile-summary">
               <div class="mobile-summary-container">
               ${items.map(item => {
-                return (
-                  `<div class="invoice-total-amounts-container">
+        return (
+          `<div class="invoice-total-amounts-container">
                       <div class="invoice-left-items">
                         <h2 class="mobile-summary-name-price">${item.name}</h2>
                         <p class="mobile-summary-qty-times">${item.quantity} x $${item.price}</p>
@@ -357,8 +357,8 @@ const getSingleInvoiceHTML = (invoice) => {
                         <p class="mobile-summary-name-price">$${item.total}</p>
                       </div>
                    </div>`
-                )
-              }).join('')}
+        )
+      }).join('')}
               </div>
             </div>
 
@@ -371,15 +371,15 @@ const getSingleInvoiceHTML = (invoice) => {
               </div>
               <div class="desktop-summary-items-container">
               ${items.map(item => {
-                return (
-                  `<div class="desktop-summary-items">
+        return (
+          `<div class="desktop-summary-items">
                       <p>${item.name}</p>
                       <p>${item.quantity}</p>
                       <p class="summary-price">$${item.price}</p>
                       <p class="summary-price">$${item.total}</p>
                     </div>`
-                )
-              }).join('')}
+        )
+      }).join('')}
               </div>
             </div>
 
@@ -526,7 +526,7 @@ const loadPage = (state) => {
   invoiceTotal = _qs('.invoice-header-title__amt span');
   invoiceTotal.textContent = appState.length
   _qs('.mobile-status-controls').style.display = 'none'
-  if(state.length === 0) {
+  if (state.length === 0) {
     let noItems = noItemsHTML()
     siteContent.appendChild(noItems)
   } else {
@@ -830,10 +830,10 @@ const sumLineItems = () => {
 
 const setInvoiceToAppState = () => {
 
- let noItems = _qs('#no-items');
- if(noItems) {
-  noItems.style.display = 'none'
- }
+  let noItems = _qs('#no-items');
+  if (noItems) {
+    noItems.style.display = 'none'
+  }
 
   getLineItemsAndAddToObj()
   sumLineItems()
