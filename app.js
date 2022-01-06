@@ -1,13 +1,14 @@
-
-
-
-// ================HELPER FUNCTIONS===================
+// ==============================================================================
+// ======================= HELPER FUNCTIONS =====================================
+// ==============================================================================
 const _id = (elem) => {
   return document.getElementById(elem)
 }
+
 const _qs = (elem) => {
   return document.querySelector(elem)
 }
+
 const _qsAll = (elem) => {
   return document.querySelectorAll(elem)
 }
@@ -81,7 +82,9 @@ const toElTopo = () => {
   });
 }
 
-// DOM SELECTORS ========================================
+// ==============================================================================
+// ======================= DOM SELECTORS ========================================
+// ==============================================================================
 const dropdownContent = _qs('.dropdown-content')
 const showInvoice = _qsAll('.single-invoice__arrow')
 const invoicesContainer = _qs('.invoices-container')
@@ -111,7 +114,9 @@ let inputLabelMsg = _qsAll('.input-label-msg');
 let lineItemDelete = _qsAll('.line-item-delete');
 let invoiceForm = _qsAll('.invoice-form')
 
-// APP STATE ========================
+// ==============================================================================
+// =========================== APP STATE ========================================
+// ==============================================================================
 let appState = [];
 let UIState = {
   selectedID: null,
@@ -119,8 +124,9 @@ let UIState = {
   currentInvoice: {}
 }
 
-// HTML ===================================
-// NEW BUTTON HEADER BAR ==================
+// ==============================================================================
+// =========================== HTML  ============================================
+// ==============================================================================
 const invoiceHeaderHTML = () => {
   let div = document.createElement('div');
   div.setAttribute('id', 'invoice-header');
@@ -142,10 +148,30 @@ const invoiceHeaderHTML = () => {
   return div;
 }
 
+const noItemsHTML = () => {
+  let div = document.createElement('div');
+  div.setAttribute('id', 'no-items');
+  div.setAttribute('class', 'no-items-container');
+  let html = `
+      <div class="no-items-msg">
+       <img src="https://res.cloudinary.com/rjsmedia/image/upload/v1641118946/invoicer/illustration-empty_uwfcif.svg" />
+       <h2>There Is Nothing Here</h2>
+       <p>Create an invoice by clicking the <span>New </span>button to get started</p>
+      </div>`;
+  div.innerHTML = html;
+  return div;
+}
+
 const editLineItemHTML = (item, i) => {
+  let lineItemTotal;
   if (item === false && i === false) {
     item = ''
     i = ''
+  }
+  if (UIState.isEditing === true) {
+    lineItemTotal = 'edit-line-item-total'
+  } else {
+    lineItemTotal = 'line-item-total'
   }
   return `
   <div class="form-col-5-mod">
@@ -177,7 +203,7 @@ const editLineItemHTML = (item, i) => {
           <label class="input-label" for="project-description">Line Total </label>
           <span class="input-label-msg">can't be empty</span>
         </div>
-        <p class="line-item-total">$${item.total}</p>
+        <p class="${lineItemTotal}">$${item.total}</p>
       </div>
       <div class="form-group form-group-trash">
         <img id=${i === 0 ? "edit-trash-constant" : i} class="line-item-delete"
@@ -208,7 +234,7 @@ let createInvoiceHTML = (item) => {
 let getNewInvoiceHTML = (item) => {
   let div = document.createElement('div')
   div.className = 'single-invoice show_invoice';
-  div.setAttribute('invoiceid', item.id)
+  div.setAttribute('data-invoiceid', item.id)
   let dueDate = convertDate(item.paymentDue)
   let html = `
     <h2 data-invoiceid=${item.id} class="single-invoice__id show_invoice"><span>#</span>${item.id}</h2>
@@ -294,27 +320,52 @@ const getSingleInvoiceHTML = (invoice) => {
                 <h2 class="invoice-summary__deats">${clientEmail}</h2>
               </div>
             </div>
-          <br>
-            <div class="invoice-summary__items">
-              <div class="invoice-summary__items--header grid">
-                <p>Item Name</p>
-                <p>QTY.</p>
-                <p>Price</p>
-                <p>Total</p>
-              </div>
-              ${items.map(item => {
-        return (
-          `<div class="invoice-summary__items--item grid">
-                    <p class="job-type">${item.name} ${item.quantity} ${item.price}</p>
+     
 
-                    <p class="single-invoice-total">$${item.total}</p>
-                  </div>`
-        )
-      }).join('')}
+            <div class="mobile-summary">
+              <div class="mobile-summary-container">
+              ${items.map(item => {
+                return (
+                  `<div class="invoice-total-amounts-container">
+                      <div class="invoice-left-items">
+                        <h2 class="mobile-summary-name-price">${item.name}</h2>
+                        <p class="mobile-summary-qty-times">${item.quantity} x $${item.price}</p>
+                      </div>
+                      <div class="invoice-right-totals">
+                        <p class="mobile-summary-name-price">$${item.total}</p>
+                      </div>
+                   </div>`
+                )
+              }).join('')}
+              </div>
             </div>
+
+            <div class="desktop-summary">
+              <div class="desktop-summary-header">
+                  <p>Item Name</p>
+                  <p>Qty</p>
+                  <p class="summary-price">Price</p>
+                  <p class="summary-price">Total</p>
+              </div>
+              <div class="desktop-summary-items-container">
+              ${items.map(item => {
+                return (
+                  `<div class="desktop-summary-items">
+                      <p>${item.name}</p>
+                      <p>${item.quantity}</p>
+                      <p class="summary-price">$${item.price}</p>
+                      <p class="summary-price">$${item.total}</p>
+                    </div>`
+                )
+              }).join('')}
+              </div>
+            </div>
+
+
+
             <div class="invoice-summary__totals-bar flex">
               <p>Amount Due</p>
-              <h2>$657.90</h2>
+              <h2>$${total}</h2>
             </div>
           </div> 
         </div>
@@ -326,10 +377,13 @@ const getSingleInvoiceHTML = (invoice) => {
 
 const createSingleListItemHTML = () => {
   let itemClass;
-  if(UIState.isEditing) {
+  let lineItemTotal;
+  if (UIState.isEditing) {
     itemClass = 'edit-line-item-item'
+    lineItemTotal = 'edit-line-item-total'
   } else {
     itemClass = 'line-item-item'
+    lineItemTotal = 'line-item-total'
   }
   let html = `
 
@@ -359,7 +413,7 @@ const createSingleListItemHTML = () => {
         <div class="label-wrap">
           <label class="input-label" for="project-description">Line Total </label>
         </div>
-        <p class="line-item-total">$0.00</p>
+        <p class="${lineItemTotal}">$0.00</p>
       </div>
       <div class="form-group form-group-trash">  
         <img class="line-item-delete" src="https://res.cloudinary.com/rjsmedia/image/upload/v1641118944/invoicer/icon-delete_pvdfsa.svg" alt="">
@@ -374,10 +428,11 @@ const createSingleListItemHTML = () => {
   return div
 }
 
-// ===============================EVENT LISTENERS =====================================
 
-// =============================NEW INVOICE FORM ==============================
-// NEEDS TO BE RESET AFTER SUBMIT REVISIT ===================
+
+// =============================================================================
+// =========================== BAD GLOBAL OBJECT FIX THIS  =====================
+// =============================================================================
 let newInvoice = {
   id: null,
   createdAt: null,
@@ -408,7 +463,7 @@ let newInvoice = {
 
 const newInvoiceReset = () => {
   newInvoice = {
-    id: generateID(),
+    id: null,
     createdAt: null,
     paymentDue: null,
     description: null,
@@ -435,26 +490,35 @@ const newInvoiceReset = () => {
   }
 }
 
-let tempLineItems = []
 
 
+
+// =============================================================================
+// =========================== APP FUNCTIONS  ==================================
+// =============================================================================
 const loadPage = (state) => {
   let body = _qs('body');
   setPageIds(body, 'index');
   let invoiceHeader = invoiceHeaderHTML();
   siteContent.appendChild(invoiceHeader)
-  let single = state.map((item, i) => {
-    createInvoiceHTML(item)
-  })
   invoiceTotal = _qs('.invoice-header-title__amt span');
   invoiceTotal.textContent = appState.length
   _qs('.mobile-status-controls').style.display = 'none'
+  if(state.length === 0) {
+    let noItems = noItemsHTML()
+    siteContent.appendChild(noItems)
+  } else {
+    let single = state.map((item, i) => {
+      createInvoiceHTML(item)
+    })
+  }
+
 }
 
 
 const checkForEmpty = (inputElem) => {
   let errors = []
-  // ======================GRABBING INPUT ELEMENTS  ======================
+  // ====================== GRABBING INPUT ELEMENTS  ===========================
   inputElem.forEach((input, i) => {
     let msg = input.previousElementSibling.children[1];
     if (input.value === '') {
@@ -463,7 +527,7 @@ const checkForEmpty = (inputElem) => {
       addInputErrorClass(msg, 'error')
     }
   })
-  // ======================GRABBING DYNAMICALLY ADDED DOM ELEMENTS =======
+  // =================== GRABBING DYNAMICALLY ADDED DOM ELEMENTS ===============
   let inputLineItem;
   if (UIState.isEditing) {
     inputLineItem = _qsAll('.edit-line-item-item')
@@ -480,9 +544,9 @@ const checkForEmpty = (inputElem) => {
     }
   })
   if (errors.length > 0) {
-    _qs('.form-group-title-span').style.opacity = '1';
-  } else {
-    _qs('.form-group-title-span').style.opacity = '0';
+    _qsAll('.form-group-title-span').forEach(header => {
+      header.style.opacity = '1';
+    })
   }
   return errors
 }
@@ -504,27 +568,20 @@ const removeInputErrorClass = (elem, className) => {
 const updateNewInvoiceState = (obj, input) => {
   let keys = input.name.split('-')
   let lastArrElem = keys[keys.length - 1]
-  if (keys.length === 3 && (lastArrElem === 'name' || lastArrElem === 'qty' || lastArrElem === 'price')) {
-    // updateLineItemState(obj, keys, input, parentID)
-  } else {
-    updateInputItemState(obj, keys, input)
-  }
+  updateInputItemState(obj, keys, input)
+
 }
 
 const updateEditInvoiceState = (obj, input) => {
   let keys = input.name.split('-')
-
   let lastArrElem = keys[keys.length - 1]
-  if (keys.length === 3 && (lastArrElem === 'name' || lastArrElem === 'qty' || lastArrElem === 'price')) {
-
-    console.log(keys, lastArrElem)
-  } else {
-    updateInputItemState(obj, keys, input)
-  }
+  updateInputItemState(obj, keys, input)
 }
 
 const updateInputItemState = (obj, keys, input) => {
-  if (keys.length > 1) {
+  if (keys.length > 2) {
+    getLineItemsAndAddToObj()
+  } else if (keys.length > 1) {
     obj[keys[0]][keys[1]] = input.value
   } else {
     obj[keys[0]] = input.value
@@ -532,12 +589,10 @@ const updateInputItemState = (obj, keys, input) => {
 }
 
 
-
 const showListItemInput = (e) => {
   e.preventDefault()
   const parent = e.target.parentElement.previousElementSibling;
   let newLineItem = createSingleListItemHTML();
-  console.log('creating', newLineItem)
   let edit
   if (UIState.isEditing) {
     edit = 'edit-'
@@ -548,7 +603,7 @@ const showListItemInput = (e) => {
   let allLineItems = _qsAll('.line-item-delete')
   allLineItems.forEach(item => {
     item.addEventListener('click', (e) => {
-      if(e.target.id !== edit + "trash-constant") {
+      if (e.target.id !== edit + "trash-constant") {
         e.target.parentElement.parentElement.remove();
       }
     })
@@ -556,47 +611,17 @@ const showListItemInput = (e) => {
 }
 
 const removeErrorsAndUpdateState = (e, cls1, cls2, cls3) => {
-  // removeErrorsAndUpdateState(e, 'input-line-item', 'input-text', 'error')
   let input = e.target
   if (input.classList.contains(cls1) || input.classList.contains(cls2)) {
     if (input.classList.contains(cls3) && input.value !== '') {
       removeInputErrorClass(input, cls3)
     }
-    if(UIState.isEditing) {
-      console.log('IN REMOVE ERRORS EDITING')
+    if (UIState.isEditing) {
       updateEditInvoiceState(newInvoice, input)
     } else {
-      console.log('IN REMOVE ERRORS NEW INVOICE')
       updateNewInvoiceState(newInvoice, input)
     }
-
   }
-}
-
-const filterInvoicesBy = (type) => {
-  let filteredInvoices = [];
-  invoicesContainer.innerHTML = ''
-  if (type === 'all') {
-    loadPage(appState)
-  } else {
-    let filteredInvoices = appState.filter(item => item.status === type);
-    loadPage(filteredInvoices)
-  }
-}
-
-
-const filterItemsSelect = (e) => {
-  let type = ''
-  if (e.target.classList.contains('dropdown-filter-paid')) {
-    type = 'paid'
-  } else if (e.target.classList.contains('dropdown-filter-pending')) {
-    type = 'pending'
-  } else if (e.target.classList.contains('dropdown-filter-draft')) {
-    type = 'draft'
-  } else {
-    type = 'all'
-  }
-  filterInvoicesBy(type)
 }
 
 const updateInvoicePaidUI = (paidBTN) => {
@@ -669,17 +694,21 @@ const spinnerOff = () => {
 const getLineItemsAndAddToObj = () => {
   let tempObj = {}
   let tempArr = [];
-  // CONDITONAL CHECK FOR EDITING
   let lineItems;
-  if(UIState.isEditing) {
+  let tempLineItemTotal;
+  if (UIState.isEditing) {
     lineItems = _qsAll('.edit-line-item-item');
+    tempLineItemTotal = _qsAll('.edit-line-item-total')
   } else {
-   lineItems = _qsAll('.line-item-item');
+    lineItems = _qsAll('.line-item-item');
+    tempLineItemTotal = _qsAll('.line-item-total')
   }
 
-  // CONDITONAL CHECK FOR EDITING
+
   let counter = 0;
+
   lineItems.forEach((item, i) => {
+
     if (item.name === 'line-item-qty') {
       tempObj.quantity = item.value;
     }
@@ -689,19 +718,30 @@ const getLineItemsAndAddToObj = () => {
     if (item.name === 'line-item-price') {
       tempObj.price = item.value;
     }
+
     counter++
     if (counter === 3) {
-      counter = 0;
       tempObj.total = tempObj.quantity * tempObj.price
+      counter = 0;
       tempArr.push(tempObj)
       tempObj = {};
     }
   })
   newInvoice.items = tempArr
+
+  tempLineItemTotal.forEach((line, i) => {
+    line.textContent = `$${newInvoice.items[i].total}`
+  })
 }
 
 const clearFormInputs = () => {
   let textInputs = _qsAll('.input-text')
+  if (UIState.isEditing) {
+    textInputs = _qsAll('.edit-input-text')
+  } else {
+    textInputs = _qsAll('.input-text')
+  }
+
   textInputs.forEach(input => {
     input.value = ''
   })
@@ -721,6 +761,7 @@ const clearFormInputs = () => {
 }
 
 const getEditFormHTML = () => {
+  newInvoice.id = UIState.currentInvoice.id
   let street = _qs('#edit-street')
   let city = _qs('#edit-city')
   let zipcode = _qs('#edit-zipcode')
@@ -733,6 +774,7 @@ const getEditFormHTML = () => {
   let clientCountry = _qs('#edit-client-country')
   let paymentDue = _qs('#edit-payment-due')
   let projectDescription = _qs('#edit-project-description')
+  let paymentTerms = _qs('#select-input-2')
   editFormContainer.classList.remove('hide')
   editFormContainer.classList.add('show')
   street.value = UIState.currentInvoice.senderAddress.street
@@ -746,6 +788,7 @@ const getEditFormHTML = () => {
   clientZip.value = UIState.currentInvoice.clientAddress.postCode
   clientCountry.value = UIState.currentInvoice.clientAddress.country
   paymentDue.value = UIState.currentInvoice.paymentDue
+  paymentTerms.value = UIState.currentInvoice.paymentTerms
   projectDescription.value = UIState.currentInvoice.description
   if (UIState.currentInvoice.items.length > 0) {
     let container = _qs('.edit-line-items-wrapper');
@@ -764,6 +807,12 @@ const sumLineItems = () => {
 }
 
 const setInvoiceToAppState = () => {
+
+ let noItems = _qs('#no-items');
+ if(noItems) {
+  noItems.style.display = 'none'
+ }
+
   getLineItemsAndAddToObj()
   sumLineItems()
   let createdDate = createDate()
@@ -784,9 +833,23 @@ const setInvoiceToAppState = () => {
   newInvoiceReset()
 }
 
+const removeFormErrors = (class1, class2) => {
+  let inputs = _qsAll(class1);
+  inputs.forEach(input => {
+    removeInputErrorClass(input, class2);
+  })
+}
+
+const clearSpanMsg = () => {
+  _qsAll('.form-group-title-span').forEach(header => {
+    header.style.opacity = '0';
+  })
+}
+// =============================================================================
+// =========================== EVENT LISTENERS  ================================
+// =============================================================================
 addItem.addEventListener('click', showListItemInput)
 editAddItem.addEventListener('click', showListItemInput)
-
 
 saveBtn.addEventListener('click', (e) => {
   e.preventDefault()
@@ -795,12 +858,16 @@ saveBtn.addEventListener('click', (e) => {
     toElTopo()
   }
   if (errors.length === 0 && UIState.isEditing === false) {
+    clearSpanMsg()
     setInvoiceToAppState()
   }
 })
 
 discardBtn.addEventListener('click', (e) => {
   e.preventDefault()
+  clearSpanMsg()
+  removeFormErrors('.input-text', 'error')
+  removeFormErrors('.line-item-item', 'error')
   toElTopo()
   formContainer.classList.remove('show')
   formContainer.classList.add('hide')
@@ -813,6 +880,7 @@ draftBtn.addEventListener('click', (e) => {
     toElTopo()
   }
   if (errors.length === 0 && UIState.isEditing === false) {
+    clearSpanMsg()
     newInvoice.status = 'draft'
     setInvoiceToAppState()
   }
@@ -821,37 +889,60 @@ draftBtn.addEventListener('click', (e) => {
 // EDIT SAVE=========================================
 editBtnUpdate.addEventListener('click', (e) => {
   e.preventDefault()
+
   const errors = checkForEmpty(editInputText)
   if (errors.length > 0) {
     toElTopo()
-    console.log('ERRORS')
   } else {
+    clearSpanMsg()
     editInputText.forEach(item => {
       updateEditInvoiceState(newInvoice, item)
     })
     getLineItemsAndAddToObj()
+    sumLineItems()
+
+    removeFormErrors('.edit-input-text', 'error')
+    removeFormErrors('.edit-line-item-item', 'error')
+    newInvoice.createdAt = UIState.currentInvoice.createdAt
     let newState = appState.map((invoice) => {
-      if(invoice.id === newInvoice.id) {
+      if (invoice.id === newInvoice.id) {
         return newInvoice
       } else {
         return invoice
       }
     })
-    newInvoice.createdAt = UIState.currentInvoice.createdAt
-    console.log(newState, 'NEW STATE')
 
+
+    appState = newState
+    localStorage.setItem('invoice-data', JSON.stringify(appState))
+
+    UIState.isEditing = false;
+    let found = appState.filter(item => item.id === newInvoice.id)
+    let singleInvoice = getSingleInvoiceHTML(found[0])
+    siteContent.innerHTML = '';
+    loadPage(appState)
+    clearFormInputs()
+    newInvoiceReset()
+    editFormContainer.classList.remove('show')
+    editFormContainer.classList.add('hide')
+    // toElTopo()
   }
 })
 
 editBtnCancel.addEventListener('click', (e) => {
   e.preventDefault()
-  // WIPE OUT LIST ITEMS
+  clearSpanMsg()
   editFormContainer.classList.remove('show')
   editFormContainer.classList.add('hide')
   _qs('.edit-line-items-wrapper').innerHTML = ''
+  clearFormInputs()
+  removeFormErrors('.edit-input-text', 'error')
+  removeFormErrors('.edit-line-item-item', 'error')
+  UIState.isEditing = false;
 })
 
 siteContent.addEventListener('click', (e) => {
+
   toElTopo()
   let pageID = _qs('body').dataset.page
   if (e.target.dataset.invoiceid && pageID === 'index') {
@@ -898,7 +989,6 @@ siteContent.addEventListener('click', (e) => {
 
   if (e.target.id === 'item-edit') {
     UIState.isEditing = true
-    newInvoice.id = UIState.currentInvoice.id
     getEditFormHTML()
   }
 
@@ -915,14 +1005,10 @@ toggleTheme.addEventListener('click', (e) => {
   }
 })
 
-
-
-
 // ========== KEY STROKES ====================
 formContainer.addEventListener('keyup', (e) => {
   // IS EDITING SET
   if (UIState.isEditing === false) {
-    console.log('IN NEW KEY')
     removeErrorsAndUpdateState(e, 'input-line-item', 'input-text', 'error')
   }
 })
@@ -931,25 +1017,20 @@ formContainer.addEventListener('keyup', (e) => {
 formContainer.addEventListener('change', (e) => {
   // IS EDITING SET
   if (UIState.isEditing === false) {
-    console.log('IN NEW CHANGE')
     removeErrorsAndUpdateState(e, 'input-line-item', 'input-text', 'error')
   }
 })
 
 editFormContainer.addEventListener('change', (e) => {
-  console.log('IN EDITING CHANGE')
   if (UIState.isEditing === true) {
     removeErrorsAndUpdateState(e, 'edit-line-item-item', 'edit-input-text', 'error')
   }
 })
 editFormContainer.addEventListener('keyup', (e) => {
-  console.log('IN EDITING KEYUP')
   if (UIState.isEditing === true) {
     removeErrorsAndUpdateState(e, 'edit-line-item-item', 'edit-input-text', 'error')
   }
 })
-
-
 
 // ========================== INITIAL DATA LOADING ==============================
 
@@ -981,12 +1062,7 @@ document.body.addEventListener('click', (e) => {
     deleteInvoice()
     updateLocalState()
   }
-
-
 })
-
-
-
 
 // IF WINDOW IS RESIZED AND ON  PROPER PAGE -----> ADD MOBILE CONTROLS
 window.addEventListener('resize', () => {
@@ -1004,7 +1080,6 @@ window.addEventListener('resize', () => {
     mobileControls.style.display = 'none'
   }
 })
-
 
 window.addEventListener('load', (event) => {
   const url = './data.json'
@@ -1030,6 +1105,31 @@ window.addEventListener('load', (event) => {
 
 // ================================ EVENTS LISTENERS ========================================================
 
+// const filterInvoicesBy = (type) => {
+//   let filteredInvoices = [];
+//   invoicesContainer.innerHTML = ''
+//   if (type === 'all') {
+//     loadPage(appState)
+//   } else {
+//     let filteredInvoices = appState.filter(item => item.status === type);
+//     loadPage(filteredInvoices)
+//   }
+// }
+
+
+// const filterItemsSelect = (e) => {
+//   let type = ''
+//   if (e.target.classList.contains('dropdown-filter-paid')) {
+//     type = 'paid'
+//   } else if (e.target.classList.contains('dropdown-filter-pending')) {
+//     type = 'pending'
+//   } else if (e.target.classList.contains('dropdown-filter-draft')) {
+//     type = 'draft'
+//   } else {
+//     type = 'all'
+//   }
+//   filterInvoicesBy(type)
+// }
 
 
 
