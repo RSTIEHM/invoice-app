@@ -139,10 +139,32 @@ const invoiceHeaderHTML = () => {
         </div>
         <div class="invoice-header-filter-container">
           <h3>Filter <span class="invoice-header-span">by status</span><img src="https://res.cloudinary.com/rjsmedia/image/upload/v1641118944/invoicer/icon-arrow-down_ispveb.svg" alt="arrow"></span></h3>
+          <div class="dropdown-container">
+          <div class="dropdown">
+            <div class="dropdown-content">
+            <div class="checkbox-container">
+              <input class="filter-checkbox" id="draft-check" type="checkbox" name="draft-check">
+              <label for="draft-check">Draft</label>
+            </div>
+            <div class="checkbox-container">
+              <input class="filter-checkbox" id="draft-pending" type="checkbox" name="draft-pending">
+              <label for="draft-pending">Pending</label>
+            </div>
+            <div class="checkbox-container">
+              <input class="filter-checkbox" id="draft-paid" type="checkbox" name="draft-paid">
+              <label for="draft-paid">Paid</label>
+            </div>
+            </div>
+          </div>
+       </div>
         </div>
         <div class="invoice-header-button-container">
           <button id="create-new-invoice" class="btn btn-1"><span>+</span> New</button>
         </div>
+
+
+
+
       </div>`;
   div.innerHTML = html;
   return div;
