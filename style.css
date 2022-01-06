@@ -378,6 +378,25 @@ font: inherit
   font-weight: bold!important;
 }
 
+input[type="checkbox"] {
+  /* background-color: var(--clr-purple-med-dark)!important;
+  appearance: none;
+  background-color: #fff;
+  margin: 0;
+  font: inherit;
+  color: currentColor;
+  width: 1.15em;
+  height: 1.15em;
+  border: 0.15em solid var(--clr-purple);
+  border-radius: 0.15em;
+  transform: translateY(-0.075em); */
+}
+
+input[type="checkbox"]::before {
+  /* transform-origin: bottom left;
+  clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%); */
+}
+
 /* FORMS */
 
 .form-elements {
@@ -925,6 +944,7 @@ background-color: rgba(0, 0, 0, 0.63);
   width: 100%;
   color: var(--clr-white);
   margin-bottom: 25px;
+  z-index: 1000;
 }
 
 .invoice-header-span {
@@ -989,21 +1009,20 @@ background-color: rgba(0, 0, 0, 0.63);
 /* DROPDOWN */
 .dropdown-container {
   position: absolute;
-  z-index: 5000;
+  z-index: 1;
   bottom: 0;
   top:0;
-  transform: translate(0rem, 2.2rem);
-  width: 100%;
- font-weight: bold;
-    display: none;
+  transform: translate(-10rem, -2.2rem);
+  width: 70%;
+  font-weight: bold;
+  display: none;
 }
 
 .dropdown {
   background-color: var(--summary-items-bg);
-  padding: 1.5rem 0rem 1.5rem 1rem;
+  padding: .5rem 0rem .5rem 1rem;
   text-align: left;
   border-radius: 10px;
-  
 }
 
 .dropdown-content {
@@ -1072,6 +1091,7 @@ background-color: rgba(0, 0, 0, 0.63);
   box-shadow: 3px 3px 10px rgba(212, 211, 211, 0.082);
   border-radius: 10px;
   margin-bottom: 10px;
+  z-index: 0;
 }
 
 .single-invoice__id {
@@ -1104,6 +1124,7 @@ background-color: rgba(0, 0, 0, 0.63);
   opacity: .8;
   box-shadow: 5px 5px 10px rgba(255, 255, 255, 0.103);
   border: 1px solid var(--clr-purple);
+  z-index: 1;
 }
 
 .single-invoice__id {
