@@ -799,6 +799,8 @@ const getEditFormHTML = () => {
   let paymentTerms = _qs('#select-input-2')
   editFormContainer.classList.remove('hide')
   editFormContainer.classList.add('show')
+  let mobileControls = _qs('.mobile-status-controls');
+  mobileControls.classList.remove('show')
   street.value = UIState.currentInvoice.senderAddress.street
   city.value = UIState.currentInvoice.senderAddress.city
   zipcode.value = UIState.currentInvoice.senderAddress.postCode
@@ -812,6 +814,7 @@ const getEditFormHTML = () => {
   paymentDue.value = UIState.currentInvoice.paymentDue
   paymentTerms.value = UIState.currentInvoice.paymentTerms
   projectDescription.value = UIState.currentInvoice.description
+
   if (UIState.currentInvoice.items.length > 0) {
     let container = _qs('.edit-line-items-wrapper');
     UIState.currentInvoice.items.forEach((item, i) => {
