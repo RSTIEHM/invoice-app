@@ -33,11 +33,7 @@
   --transition: .3s ease-in-out;
 }
 
-#item-delete-mobile {
-  display:flex;
-  justify-content: center;
-  align-items: center;
-}
+
 @media(min-width: 35em) {
 /* :root {
   --fs-800: 5rem;
@@ -1735,6 +1731,11 @@ background-color: rgba(0, 0, 0, 0.63);
   gap: 10px;
 }
 
+#item-delete-mobile {
+  display:flex;
+  justify-content: center!important;
+  align-items: center!important;
+}
 
 @media (min-width: 38em) {
   /* .mobile-status-controls {
