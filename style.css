@@ -1387,6 +1387,8 @@ background-color: rgba(0, 0, 0, 0.63);
   #item-delete,
   #mark-paid {
   display: flex;
+      align-items: center;
+  justify-content: center;
 }
 }
 
